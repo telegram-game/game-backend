@@ -1,0 +1,50 @@
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { Logger as LoggerService } from 'src/modules/loggers';
+import { appProvider } from './applications/app.provider';
+import { setupSwagger } from './docs/docs';
+import compression from 'compression';
+
+async function bootstrap() {
+  const startBoootstrapTime = performance.now();
+
+  const app = await NestFactory.create(appProvider.getAppModule(), {
+    cors: true,
+    logger: new LoggerService(),
+    rawBody: true,
+  });
+  const logger = app.get(LoggerService);
+  app.useLogger(logger);
+
+  // With the body size is greater than 1kb, the response will be compressed
+  app.use(
+    compression({
+      filter: () => {
+        return true;
+      },
+    }),
+  );
+
+  // enable graceful shutdown
+  app.enableShutdownHooks();
+
+  const configService = await app.resolve(ConfigService);
+  // Swagger setup
+  if (configService.get<string>('env') !== 'production') {
+    setupSwagger(app, configService);
+  }
+
+  const port = configService.get<number>('port') || 3000;
+  await app.listen(port).then(() => {
+    const bootstrapTime = Math.round(performance.now() - startBoootstrapTime);
+    logger.info(`Application is running on: ${port}`);
+    logger.info(
+      `Application started in ${bootstrapTime}ms`,
+      {
+        executionTime: bootstrapTime,
+      },
+      bootstrap.name,
+    );
+  });
+}
+bootstrap();

@@ -1,0 +1,212 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserProvider {
+  LOCAL
+  TELEGRAM
+  GOOGLE
+  FACEBOOK
+}
+
+enum GameHouse {
+  DOGS
+  HAMSTERS
+}
+
+enum HeroAttribute {
+  ATTACK
+  HP
+  CRIT_RATE
+  CRIT_DAMAGE
+  EVASION
+  LIFE_STEAL
+  REFLECT
+  HP_REGEN
+}
+
+enum HeroSkill {
+  DESOLATE
+  REFLECT
+  LIFE_STEAL
+  RISING_FURY
+  FATAL_BLOW
+}
+
+enum ItemType {
+  SWORD
+  SHIELD
+  HELMET
+  ARMOR
+  BOOTS
+  RING
+  AMULET
+  GLOVES
+  PANTS
+  CAPE
+  BELT
+  BRACERS
+  EARRINGS
+  NECKLACE
+  SHOULDER
+  TALISMAN
+  WAND
+  ST
+}
+
+model User {
+  id                          String                        @id @default(cuid()) @map("id")
+  username                    String?                       @unique @map("username")
+  password                    String?                       @map("password")
+  provider                    UserProvider                  @default(LOCAL) @map("provider")
+  providerId                  String?                       @map("provider_id")
+  createdAt                   DateTime                      @default(now()) @map("created_at")
+  updatedAt                   DateTime                      @updatedAt @map("updated_at")
+  userProfile                 UserProfiles[]
+  userGameProfile             UserGameProfiles[]
+  userGameHero                UserGameHeros[]
+  userGameHeroAttributes      UserGameHeroAttributes[]
+  userGameHeroSkills          UserGameHeroSkills[]
+  userInventoryAttributes     UserInventoryAttributes[]
+  userGameInventories         UserGameInventories[]
+  userGameHeroItems           UserGameHeroItems[]
+  userGameInventoryAttributes UserGameInventoryAttributes[]
+
+  @@unique([provider, providerId])
+  @@map("users")
+}
+
+model UserProfiles {
+  id        String   @id @default(cuid()) @map("id")
+  userId    String   @map("user_id")
+  firstName String?  @map("first_name")
+  lastName  String?  @map("last_name")
+  email     String?  @map("email")
+  avatar    String?  @map("avatar")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("user_profiles")
+}
+
+model UserGameProfiles {
+  id           String          @id @default(cuid()) @map("id")
+  userId       String          @map("user_id")
+  house        GameHouse       @map("house")
+  class        String?         @default("Warrior")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  user         User            @relation(fields: [userId], references: [id])
+  userGameHero UserGameHeros[]
+
+  @@map("user_game_profiles")
+}
+
+model UserInventoryAttributes {
+  id          String        @id @default(cuid()) @map("id")
+  userId      String        @map("user_id")
+  inventoryId String        @map("inventory_id")
+  attribute   HeroAttribute @map("attribute")
+  value       Int           @default(0)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  user        User          @relation(fields: [userId], references: [id])
+
+  @@map("user_inventory_attributes")
+}
+
+model UserGameHeros {
+  id                     String                   @id @default(cuid()) @map("id")
+  userId                 String                   @unique @map("user_id") // user can have only one hero now
+  userGameProfileId      String                   @map("user_game_profile_id")
+  level                  Int                      @default(1) @map("level")
+  totalPower             Int                      @default(1) @map("total_power")
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  updatedAt              DateTime                 @updatedAt @map("updated_at")
+  user                   User                     @relation(fields: [userId], references: [id])
+  userGameProfile        UserGameProfiles         @relation(fields: [userGameProfileId], references: [id])
+  userGameHeroAttributes UserGameHeroAttributes[]
+  userGameHeroSkills     UserGameHeroSkills[]
+  userGameHeroItems      UserGameHeroItems[]
+
+  @@map("user_game_heros")
+}
+
+model UserGameHeroAttributes {
+  id             String        @id @default(cuid()) @map("id")
+  userId         String        @map("user_id")
+  userGameHeroId String        @map("user_game_hero_id")
+  attribute      HeroAttribute @map("attribute")
+  value          Int           @default(0)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  user           User          @relation(fields: [userId], references: [id])
+  userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
+
+  @@map("user_game_hero_attributes")
+}
+
+model UserGameInventories {
+  id                          String                        @id @default(cuid()) @map("id")
+  userId                      String                        @map("user_id")
+  itemType                    ItemType                      @map("item_type")
+  createdAt                   DateTime                      @default(now()) @map("created_at")
+  updatedAt                   DateTime                      @updatedAt @map("updated_at")
+  user                        User                          @relation(fields: [userId], references: [id])
+  userGameInventoryAttributes UserGameInventoryAttributes[]
+
+  @@map("user_game_inventories")
+}
+
+model UserGameInventoryAttributes {
+  id                  String               @id @default(cuid()) @map("id")
+  userId              String               @map("user_id")
+  inventoryId         String               @map("inventory_id")
+  attribute           HeroAttribute        @map("attribute")
+  value               Json                 @map("value")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  user                User                 @relation(fields: [userId], references: [id])
+  userGameInventories UserGameInventories? @relation(fields: [inventoryId], references: [id])
+
+  @@map("user_game_inventory_attributes")
+}
+
+model UserGameHeroItems {
+  id             String        @id @default(cuid()) @map("id")
+  userId         String        @map("user_id")
+  userGameHeroId String        @map("user_game_hero_id")
+  itemType       ItemType      @map("item_type")
+  inventoryId    String        @map("inventory_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  user           User          @relation(fields: [userId], references: [id])
+  userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
+
+  @@map("user_game_hero_items")
+}
+
+model UserGameHeroSkills {
+  id             String        @id @default(cuid()) @map("id")
+  userId         String        @map("user_id")
+  userGameHeroId String        @map("user_game_hero_id")
+  skill          HeroSkill     @map("skill")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  user           User          @relation(fields: [userId], references: [id])
+  userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
+
+  @@map("user_game_hero_skills")
+}

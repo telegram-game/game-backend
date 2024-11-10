@@ -1,0 +1,20 @@
+{
+    "DOGS": {
+        "name": "DOGS",
+        "description": "Dogs are loyal and friendly animals.",
+        "attributes": {
+            "attackLevel": 4,
+            "hpLevel": 2,
+            "luckLevel": 4
+        } 
+    },
+    "HAMSTERS": {
+        "name": "HAMSTERS",
+        "description": "Hamsters are small and cute animals.",
+        "attributes": {
+            "attackLevel": 5,
+            "hpLevel": 4,
+            "luckLevel": 1
+        } 
+    }
+}
