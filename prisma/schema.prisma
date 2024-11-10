@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -78,7 +82,6 @@ model User {
   userGameHero                UserGameHeros[]
   userGameHeroAttributes      UserGameHeroAttributes[]
   userGameHeroSkills          UserGameHeroSkills[]
-  userInventoryAttributes     UserInventoryAttributes[]
   userGameInventories         UserGameInventories[]
   userGameHeroItems           UserGameHeroItems[]
   userGameInventoryAttributes UserGameInventoryAttributes[]
@@ -114,19 +117,6 @@ model UserGameProfiles {
   @@map("user_game_profiles")
 }
 
-model UserInventoryAttributes {
-  id          String        @id @default(cuid()) @map("id")
-  userId      String        @map("user_id")
-  inventoryId String        @map("inventory_id")
-  attribute   HeroAttribute @map("attribute")
-  value       Int           @default(0)
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  user        User          @relation(fields: [userId], references: [id])
-
-  @@map("user_inventory_attributes")
-}
-
 model UserGameHeros {
   id                     String                   @id @default(cuid()) @map("id")
   userId                 String                   @unique @map("user_id") // user can have only one hero now
@@ -149,11 +139,13 @@ model UserGameHeroAttributes {
   userId         String        @map("user_id")
   userGameHeroId String        @map("user_game_hero_id")
   attribute      HeroAttribute @map("attribute")
-  value          Int           @default(0)
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @updatedAt @map("updated_at")
-  user           User          @relation(fields: [userId], references: [id])
-  userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
+
+  /// [HeroAttributeValue]
+  value        Json          @map("value")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  user         User          @relation(fields: [userId], references: [id])
+  userGameHero UserGameHeros @relation(fields: [userGameHeroId], references: [id])
 
   @@map("user_game_hero_attributes")
 }
@@ -171,10 +163,12 @@ model UserGameInventories {
 }
 
 model UserGameInventoryAttributes {
-  id                  String               @id @default(cuid()) @map("id")
-  userId              String               @map("user_id")
-  inventoryId         String               @map("inventory_id")
-  attribute           HeroAttribute        @map("attribute")
+  id          String        @id @default(cuid()) @map("id")
+  userId      String        @map("user_id")
+  inventoryId String        @map("inventory_id")
+  attribute   HeroAttribute @map("attribute")
+
+  /// [HeroAttributeValue]
   value               Json                 @map("value")
   createdAt           DateTime             @default(now()) @map("created_at")
   updatedAt           DateTime             @updatedAt @map("updated_at")

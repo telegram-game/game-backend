@@ -10,6 +10,25 @@ import { FullInventoryRepositoryModel } from 'src/modules/inventory/models/inven
 
 @Injectable()
 export class HeroService {
+  private readonly attackAttributes = [
+
+  ]
+  private readonly hpAttributes = [
+      
+  ]
+  private readonly evasionAttributes = [
+
+  ]
+  private readonly critRateAttributes = [
+
+  ]
+  private readonly lifeStealAttributes = [
+
+  ]
+  private readonly defaultCritDamegeLevel = 1;
+  private readonly lifeStealSkills = [
+  ]
+
   constructor(
     private readonly heroRepository: HeroRepository,
     private readonly inventoryRepository: InventoryRepository,
@@ -35,6 +54,7 @@ export class HeroService {
     const baseHouseHp = systemData.baseHpByLevel[house.attributes.hpLevel];
     const baseHouseEvasion = systemData.baseEvasionByLevel[house.attributes.luckLevel];
     const baseHouseCritRate = systemData.baseCritRateByLevel[house.attributes.luckLevel];
+    const baseHouseCritDamage = systemData.baseCritDamageByLevel[this.defaultCritDamegeLevel];
 
     const skill = hero.userGameHeroSkills.find(skill => skill).skill;
     const skillData = systemData.skills[skill];
@@ -43,15 +63,106 @@ export class HeroService {
     const inventoryItems =  itemInventoryIds.map(itemInventoryId => inventories.find(i => i.id === itemInventoryId));
 
     return {
-      attack: this.buildHeroAttack(),
+      attack: this.buildHeroAttack(baseHouseAttack, inventoryItems),
+      hp: this.buildHeroHP(baseHouseHp, inventoryItems),
+      evasion: this.buildEvasion(baseHouseEvasion, inventoryItems),
+      critRate: this.buildCritRate(baseHouseCritRate, inventoryItems),
+      critDamage: this.buildCritDamge(baseHouseCritDamage, inventoryItems),
+      lifeSteal: this.buildLifeSteal(skillData, inventoryItems),
     } as FullHero;
   }
 
-  private buildHeroAttack(): HeroAttributeValue {
-    return {
-      point: 0,
-      percent: 0,
-    }
+  private buildHeroAttack(baseHouseAttack: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue({
+      point: baseHouseAttack,
+    })
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.attackAttributes.includes(attribute)) {
+          attributeValue.point += attribute.value.point || 0;
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
   }
 
+  private buildHeroHP(baseHouseHp: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue({
+      point: baseHouseHp,
+    })
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.hpAttributes.includes(attribute)) {
+          attributeValue.point += attribute.value.point || 0;
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
+  }
+
+  private buildEvasion(baseHouseEvasion: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue({
+      percent: baseHouseEvasion,
+    })
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.evasionAttributes.includes(attribute)) {
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
+  }
+
+  private buildCritRate(baseHouseCritRate: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue({
+      percent: baseHouseCritRate,
+    })
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.critRateAttributes.includes(attribute)) {
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
+  }
+
+  private buildCritDamge(baseHouseCritDamage: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue({
+      percent: baseHouseCritDamage,
+    })
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.critRateAttributes.includes(attribute)) {
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
+  }
+
+  private buildLifeSteal(skillData: any, inventoryItems: FullInventoryRepositoryModel[]): HeroAttributeValue {
+    const attributeValue = new HeroAttributeValue()
+
+    if (this.lifeStealSkills.includes(skillData.code)) {
+      attributeValue.percent = skillData.attributes['lifeSteal'].percent;
+    }
+    
+    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+      for (let attribute of item.userGameInventoryAttributes) {
+        if (this.lifeStealAttributes.includes(attribute)) {
+          attributeValue.percent += attribute.value.percent || 0;
+        }
+      }
+      return attributeValue;
+    }, attributeValue);
+  }
 }

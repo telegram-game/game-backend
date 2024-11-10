@@ -27,8 +27,16 @@
         "4": 12,
         "5": 15
     },
+    "baseCritDamageByLevel": {
+        "1": 200,
+        "2": 200,
+        "3": 200,
+        "4": 200,
+        "5": 200
+    },
     "skills": {
         "DESOLATE": {
+            "code": "DESOLATE",
             "name": "DESOLATE",
             "description": "Desolate the enemy.",
             "attributes": {
@@ -39,6 +47,7 @@
             }
         },
         "REFLECT": {
+            "code": "REFLECT",
             "name": "REFLECT",
             "description": "Reflect the enemy's attack.",
             "attributes": {
@@ -49,6 +58,7 @@
             }
         },
         "LIFE_STEAL": {
+            "code": "LIFE_STEAL",
             "name": "LIFE_STEAL",
             "description": "Steal the enemy's life.",
             "attributes": {
@@ -59,16 +69,18 @@
             }
         },
         "RISING_FURY": {
+            "code": "RISING_FURY",
             "name": "RISING_FURY",
             "description": "Fury rises.",
             "attributes": {
                 "attack": {
                     "point": 0,
-                    "percent": 5
+                    "percentPerTime": 5
                 }
             }
         },
         "FATAL_BLOW": {
+            "code": "FATAL_BLOW",
             "name": "FATAL_BLOW",
             "description": "Blow the enemy.",
             "attributes": {

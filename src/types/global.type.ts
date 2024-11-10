@@ -8,4 +8,11 @@ declare global {
       rawBody: Buffer;
     }
   }
+
+  namespace PrismaJson {
+    export interface HeroAttributeValue {
+      point: number;
+      percent: number;
+    }
+  }
 }

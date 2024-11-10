@@ -1,8 +1,17 @@
-import { Prisma, UserGameHeros, UserGameHeroAttributes, UserGameHeroSkills, UserGameHeroItems, UserGameProfiles, HeroSkill } from '@prisma/client';
+import { UserGameHeros, UserGameHeroAttributes, UserGameHeroSkills, UserGameHeroItems, UserGameProfiles, HeroSkill } from '@prisma/client';
 
 export class HeroAttributeValue {
     point: number;
     percent: number;
+    percentPerTime: number;
+
+    constructor(partials?: Partial<HeroAttributeValue>) {
+        Object.assign(
+            this, 
+            { point: 0, percent: 0, percentPerTime: 0 }, // default
+            partials
+        );
+    }
 }
 
 export type FullHero = UserGameHeros & UserGameProfiles & {
