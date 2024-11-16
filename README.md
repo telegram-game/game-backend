@@ -129,12 +129,9 @@ $ docker run --name=game-api --env=APP_NAME=GAME_API --env=TZ=UTC --env=NODE_ENV
 ## Run the migration in container (docker)
 ### Build the docker image
 ```
-$ docker build -t lvpn-config-manager-migration-image -f migrate/Dockerfile .
+$ docker build -t game-api-migration-image -f migrate/Dockerfile .
 ```
 ### Run migration docker container
 ```
-$ docker run --name=lvpn-game-api-migration --env=POSTGRESQL_USER="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_HOST="localhost" --env=POSTGRESQL_DB=livevpn-db --env=POSTGRESQL_PORT=5432  -d lvpn-config-manager-migration-image
-
-
-
+$ docker run --name=lvpn-game-api-migration --env=POSTGRESQL_USER="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_HOST="localhost" --env=POSTGRESQL_DB=livevpn-db --env=POSTGRESQL_PORT=5432  -d game-api-migration-image
 ```

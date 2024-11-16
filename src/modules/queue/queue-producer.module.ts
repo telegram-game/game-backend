@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CachingModule } from '../caching';
 @Module({
-  imports: [
-    CachingModule,
-  ],
+  imports: [CachingModule],
   providers: [],
   exports: [],
 })

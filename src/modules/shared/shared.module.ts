@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { HttpModule } from '../http';
 
+@Global()
 @Module({
   imports: [HttpModule],
   providers: [],

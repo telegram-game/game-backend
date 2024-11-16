@@ -2,26 +2,21 @@ import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
 import { FullHeroRepositoryModel } from '../models/hero.model.dto';
+import { UserGameHeroAttributes, UserGameHeros } from '@prisma/client';
 
 @Injectable({
   scope: Scope.REQUEST,
 })
-export class HeroRepository extends BaseRepository {
+export class HeroAttributeRepository extends BaseRepository {
   constructor(prismaService: PrismaService) {
     super(prismaService);
   }
 
-  async getFullFirst(userId: string): Promise<FullHeroRepositoryModel> {
-    return this.client.userGameHeros.findFirst({
-      where: {
-        userId,
-      },
-      include: {
-        userGameProfile: true,
-        userGameHeroAttributes: true,
-        userGameHeroItems: true,
-        userGameHeroSkills: true,
-      },
+  async create(
+    data: Partial<UserGameHeroAttributes>,
+  ): Promise<UserGameHeroAttributes> {
+    return this.client.userGameHeroAttributes.create({
+      data: data as UserGameHeroAttributes,
     });
   }
 }
