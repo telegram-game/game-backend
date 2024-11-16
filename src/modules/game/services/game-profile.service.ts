@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import asyncLocalStorage from 'src/storage/async_local';
-import { PrismaService } from 'src/modules/prisma';
 import { GameProfileRepository } from '../repositories/game-profile.repository';
 import { FullGameProfile } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
-import { GameHouse } from '@prisma/client';
-import houseData from '../../../data/house.json';
-import systemData from '../../../data/system.json';
+import { GameHouse, UserGameProfiles } from '@prisma/client';
+import {configurationData} from '../../../data'
+
+const houseData = configurationData.houses;
+const skills = configurationData.skills;
 
 @Injectable()
 export class GameProfileService {
@@ -15,6 +15,10 @@ export class GameProfileService {
     private readonly gameProfileRepository: GameProfileRepository,
     private readonly heroService: HeroService,
   ) {}
+
+  async getByIdOrFirst(userId: string, gameProfileId?: string): Promise<UserGameProfiles> {
+    return this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
+  }
 
   async getFullFirst(userId: string): Promise<FullGameProfile> {
     return this.createOrGetFullFirst(userId);
@@ -35,8 +39,9 @@ export class GameProfileService {
     );
     const houseValue = houseData[gameProfile.house];
     return {
+      id: gameProfile.id,
       houseData: houseValue,
-      skillData: systemData.skills[fullHero.skill],
+      skillData: skills[fullHero.skill],
       hero: fullHero,
     };
   }

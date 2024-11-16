@@ -48,6 +48,13 @@ enum HeroSkill {
   FATAL_BLOW
 }
 
+enum ItemCode {
+  FIRE_SWORD
+  FIRE_SHIELD
+  ICE_SWORD
+  ICE_SHIELD
+}
+
 enum ItemType {
   SWORD
   SHIELD
@@ -105,14 +112,15 @@ model UserProfiles {
 }
 
 model UserGameProfiles {
-  id           String          @id @default(cuid()) @map("id")
-  userId       String          @map("user_id")
-  house        GameHouse       @map("house")
-  class        String?         @map("class")
-  createdAt    DateTime        @default(now()) @map("created_at")
-  updatedAt    DateTime        @updatedAt @map("updated_at")
-  user         User            @relation(fields: [userId], references: [id])
-  userGameHero UserGameHeros[]
+  id                  String                @id @default(cuid()) @map("id")
+  userId              String                @map("user_id")
+  house               GameHouse             @map("house")
+  class               String?               @map("class")
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @updatedAt @map("updated_at")
+  user                User                  @relation(fields: [userId], references: [id])
+  userGameHero        UserGameHeros[]
+  UserGameInventories UserGameInventories[]
 
   @@map("user_game_profiles")
 }
@@ -153,11 +161,15 @@ model UserGameHeroAttributes {
 model UserGameInventories {
   id                          String                        @id @default(cuid()) @map("id")
   userId                      String                        @map("user_id")
+  userGameProfileId           String                        @map("user_game_profile_id")
+  itemCode                    ItemCode                      @map("item_code")
   itemType                    ItemType                      @map("item_type")
+  star                        Int                           @default(1) @map("star")
   createdAt                   DateTime                      @default(now()) @map("created_at")
   updatedAt                   DateTime                      @updatedAt @map("updated_at")
   user                        User                          @relation(fields: [userId], references: [id])
   userGameInventoryAttributes UserGameInventoryAttributes[]
+  userGameProfile             UserGameProfiles              @relation(fields: [userGameProfileId], references: [id])
 
   @@map("user_game_inventories")
 }
@@ -167,6 +179,8 @@ model UserGameInventoryAttributes {
   userId      String        @map("user_id")
   inventoryId String        @map("inventory_id")
   attribute   HeroAttribute @map("attribute")
+  star        Int           @default(1) @map("star")
+  canRoll     Boolean       @default(true) @map("can_roll")
 
   /// [HeroAttributeValue]
   value               Json                 @map("value")
@@ -183,12 +197,13 @@ model UserGameHeroItems {
   userId         String        @map("user_id")
   userGameHeroId String        @map("user_game_hero_id")
   itemType       ItemType      @map("item_type")
-  inventoryId    String        @map("inventory_id")
+  inventoryId    String        @unique() @map("inventory_id")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
   user           User          @relation(fields: [userId], references: [id])
   userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
 
+  @@unique([userGameHeroId, itemType])
   @@map("user_game_hero_items")
 }
 

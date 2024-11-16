@@ -14,7 +14,6 @@ export class HeroService extends BaseHeroService {
     private readonly heroRepository: HeroRepository,
     private readonly inventoryRepository: InventoryRepository,
     private readonly heroSkillRepository: HeroSkillRepository,
-    // private readonly heroAttributeAttribute: HeroAttributeRepository,
     private prismaService: PrismaService,
   ) {
     super();
@@ -36,6 +35,7 @@ export class HeroService extends BaseHeroService {
     const inventories = await this.inventoryRepository.getByIds(
       inventoryIds,
       userId,
+      userGameProfile.id,
     );
     return this.mapToFullHero(hero, inventories);
   }
@@ -52,7 +52,6 @@ export class HeroService extends BaseHeroService {
     await this.prismaService.$transaction(async (tx: PrismaService) => {
       this.heroRepository.joinTransaction(tx);
       this.heroSkillRepository.joinTransaction(tx);
-      // this.heroAttributeAttribute.joinTransaction(tx);
 
       // Add hero
       const hero = await this.heroRepository.createDefault(

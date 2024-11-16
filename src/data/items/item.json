@@ -1,0 +1,330 @@
+{
+    "chests": {
+        "FIRE_SWORD_L1": {
+            "code": "FIRE_SWORD_L1",
+            "name": "Fire Sword L1",
+            "itemTypeRates": {
+                "SWORD": 100
+            },
+            "itemTypeCodeRates": {
+                "SWORD": {
+                    "FIRE_SWORD": 100
+                }
+            },
+            "fixedItemAttributesCount": 1,
+            "flexibleItemAttributesCount": 1,
+            "starRates": {
+                "1": 100
+            }
+        },
+        "FIRE_SHIELD_L1": {
+            "code": "FIRE_SHIELD_L1",
+            "name": "Fire Shield L1",
+            "itemTypeRates": {
+                "SHIELD": 100
+            },
+            "itemTypeCodeRates": {
+                "SHIELD": {
+                    "FIRE_SHIELD": 100
+                }
+            },
+            "fixedItemAttributesCount": 1,
+            "flexibleItemAttributesCount": 1,
+            "starRates": {
+                "1": 100
+            }
+        },
+        "ICE_SWORD_L1": {
+            "code": "ICE_SWORD_L1",
+            "name": "Ice Sword L1",
+            "itemTypeRates": {
+                "SWORD": 100
+            },
+            "itemTypeCodeRates": {
+                "SWORD": {
+                    "ICE_SWORD": 100
+                }
+            },
+            "fixedItemAttributesCount": 1,
+            "flexibleItemAttributesCount": 1,
+            "starRates": {
+                "1": 100
+            }
+        },
+        "ICE_SHIELD_L1": {
+            "code": "FIRICE_SHIELD_L1E_SHIELD_L1",
+            "name": "Ice Shield L1",
+            "itemTypeRates": {
+                "SHIELD": 100
+            },
+            "itemTypeCodeRates": {
+                "SHIELD": {
+                    "ICE_SHIELD": 100
+                }
+            },
+            "fixedItemAttributesCount": 1,
+            "flexibleItemAttributesCount": 1,
+            "starRates": {
+                "1": 100
+            }
+        },
+        "RANDOM_SWORD_SHIELD_L1": {
+            "code": "RANDOM_SWORD_SHIELD_L1",
+            "name": "Random Sword Shield L1",
+            "itemTypeRates": {
+                "SWORD": 50,
+                "SHIELD": 50
+            },
+            "itemTypeCodeRates": {
+                "SWORD": {
+                    "FIRE_SWORD": 25,
+                    "ICE_SWORD": 25,
+                    "NORMALSWORD": 50
+                },
+                "SHIELD": {
+                    "FIRE_SHIELD": 25,
+                    "ICE_SHIELD": 25,
+                    "NORMALSHIELD": 50
+                }
+            },
+            "fixedItemAttributesCount": 1,
+            "flexibleItemAttributesCount": 1,
+            "starRates": {
+                "1": 100
+            }
+        }
+    },
+    "items": {
+        "FIRE_SWORD": {
+            "code": "FIRE_SWORD",
+            "name": "Fire Sword"
+        },
+        "FIRE_SHIELD": {
+            "code": "FIRE_SHIELD",
+            "name": "Fire Shield"
+        },
+        "ICE_SWORD": {
+            "code": "ICE_SWORD",
+            "name": "Ice Sword"
+        },
+        "ICE_SHIELD": {
+            "code": "ICE_SHIELD",
+            "name": "Ice Shield"
+        },
+        "NORMALSWORD": {
+            "code": "NORMALSWORD",
+            "name": "Normal Sword"
+        },
+        "NORMALSHIELD": {
+            "code": "NORMALSHIELD",
+            "name": "Normal Shield"
+        }
+    },
+    "itemAttributes": {
+        "SWORD": {
+            "1": {
+                "fixedItemAttributes": [
+                    {
+                        "attribute": "ATTACK",
+                        "starRate": {
+                            "1": 70,
+                            "2": 30
+                        },
+                        "value": {
+                            "point": {
+                                "value": 50
+                            }
+                        }
+                    }
+                ],
+                "flexibleItemAttributes": [
+                    {
+                        "attribute": "HP",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1.5
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "ATTACK",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "CRIT_RATE",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1.5
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "CRIT_DAMAGE",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 2
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "LIFE_STEAL",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 0.5
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "SHIELD": {
+            "1": {
+                "fixedItemAttributes": [
+                    {
+                        "attribute": "HP",
+                        "starRate": {
+                            "1": 70,
+                            "2": 30
+                        },
+                        "value": {
+                            "point": {
+                                "value": 150
+                            }
+                        }
+                    }
+                ],
+                "flexibleItemAttributes": [
+                    {
+                        "attribute": "HP",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1.5
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "ATTACK",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "CRIT_RATE",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1.5
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "CRIT_DAMAGE",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 2
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "REFLECT",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 0.5
+                            }
+                        }
+                    },
+                    {
+                        "attribute": "EVASION",
+                        "starRate": {
+                            "1": 20,
+                            "2": 20,
+                            "3": 20,
+                            "4": 20,
+                            "5": 20
+                        },
+                        "value": {
+                            "percent": {
+                                "value": 1
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

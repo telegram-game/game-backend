@@ -4,23 +4,42 @@ import {
   HeroAttributeValue,
 } from '../models/hero.model.dto';
 import { BusinessException } from 'src/exceptions';
-import houseData from '../../../data/house.json';
-import systemData from '../../../data/system.json';
 import { FullInventoryRepositoryModel } from '../models/inventory.model.dto';
+import { configurationData } from '../../../data/index';
+import { HeroAttribute, HeroSkill } from '@prisma/client';
+
+const houseData = configurationData.houses;
+const systemData = configurationData.system;
+const skills = configurationData.skills;
 
 export class BaseHeroService {
-  private readonly attackAttributes = [];
-  private readonly hpAttributes = [];
-  private readonly hpRegenAttributes = [];
-  private readonly evasionAttributes = [];
-  private readonly critRateAttributes = [];
-  private readonly lifeStealAttributes = [];
-  private readonly lifeStealSkills = [];
-  private readonly reflectSkills = [];
+  protected readonly attackAttributes: HeroAttribute[] = [
+    HeroAttribute.ATTACK,
+  ];
+  protected readonly hpAttributes: HeroAttribute[] = [
+    HeroAttribute.HP
+  ];
+  protected readonly hpRegenAttributes: HeroAttribute[] = [
+    HeroAttribute.HP_REGEN
+  ];
+  protected readonly evasionAttributes: HeroAttribute[] = [
+    HeroAttribute.EVASION
+  ];
+  protected readonly critRateAttributes: HeroAttribute[] = [
+    HeroAttribute.CRIT_RATE
+  ];
+  protected readonly lifeStealAttributes: HeroAttribute[] = [
+    HeroAttribute.LIFE_STEAL
+  ];
+  protected readonly lifeStealSkills: HeroSkill[] = [
+    HeroSkill.LIFE_STEAL,
+  ];
+  protected readonly reflectSkills: HeroSkill[] = [
+    HeroSkill.REFLECT,
+  ];
+  protected readonly hpRegenSkills: HeroSkill[] = [];
+  protected readonly defaultCritDamegeLevel = 1;
 
-  private readonly hpRegenSkills = [];
-
-  private readonly defaultCritDamegeLevel = 1;
 
   protected async mapToFullHero(
     hero: FullHeroRepositoryModel,
@@ -46,7 +65,7 @@ export class BaseHeroService {
       systemData.baseCritDamageByLevel[this.defaultCritDamegeLevel];
 
     const skill = hero.userGameHeroSkills.find((skill) => skill).skill;
-    const skillData = systemData.skills[skill];
+    const skillData = skills[skill];
 
     const itemInventoryIds = hero.userGameHeroItems.map(
       (item) => item.inventoryId,
@@ -56,6 +75,7 @@ export class BaseHeroService {
     );
 
     return {
+      id: hero.id,
       attack: this.buildHeroAttack(baseHouseAttack, inventoryItems),
       hp: this.buildHeroHP(baseHouseHp, inventoryItems),
       evasion: this.buildEvasion(baseHouseEvasion, inventoryItems),
@@ -80,7 +100,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.attackAttributes.includes(attribute)) {
+        if (this.attackAttributes.includes(attribute.attribute)) {
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
@@ -99,7 +119,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.hpAttributes.includes(attribute)) {
+        if (this.hpAttributes.includes(attribute.attribute)) {
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
@@ -118,7 +138,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.evasionAttributes.includes(attribute)) {
+        if (this.evasionAttributes.includes(attribute.attribute)) {
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
@@ -136,7 +156,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.critRateAttributes.includes(attribute)) {
+        if (this.critRateAttributes.includes(attribute.attribute)) {
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
@@ -154,7 +174,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.critRateAttributes.includes(attribute)) {
+        if (this.critRateAttributes.includes(attribute.attribute)) {
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
@@ -169,12 +189,12 @@ export class BaseHeroService {
     const attributeValue = new HeroAttributeValue();
 
     if (this.lifeStealSkills.includes(skillData.code)) {
-      attributeValue.percent = skillData.attributes['lifeSteal'].percent;
+      attributeValue.percent = skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
     }
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.lifeStealAttributes.includes(attribute)) {
+        if (this.lifeStealAttributes.includes(attribute.attribute)) {
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
@@ -189,13 +209,13 @@ export class BaseHeroService {
     const attributeValue = new HeroAttributeValue();
 
     if (this.reflectSkills.includes(skillData.code)) {
-      attributeValue.point = skillData.attributes['reflect'].point;
-      attributeValue.percent = skillData.attributes['reflect'].percent;
+      attributeValue.point = skillData.attributes[HeroAttribute.REFLECT].point;
+      attributeValue.percent = skillData.attributes[HeroAttribute.REFLECT].percent;
     }
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.lifeStealAttributes.includes(attribute)) {
+        if (this.lifeStealAttributes.includes(attribute.attribute)) {
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
@@ -211,13 +231,13 @@ export class BaseHeroService {
     const attributeValue = new HeroAttributeValue();
 
     if (this.hpRegenSkills.includes(skillData.code)) {
-      attributeValue.point = skillData.attributes['hpRegen'].point;
-      attributeValue.percent = skillData.attributes['hpRegen'].percent;
+      attributeValue.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
+      attributeValue.percent = skillData.attributes[HeroAttribute.HP_REGEN].percent;
     }
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (let attribute of item.userGameInventoryAttributes) {
-        if (this.hpRegenAttributes.includes(attribute)) {
+        if (this.hpRegenAttributes.includes(attribute.attribute)) {
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }

@@ -1,0 +1,61 @@
+{
+    "DESOLATE": {
+        "code": "DESOLATE",
+        "name": "DESOLATE",
+        "description": "Desolate the enemy.",
+        "attributes": {
+            "ATTACK": {
+                "point": 0,
+                "percent": 40
+            }
+        }
+    },
+    "REFLECT": {
+        "code": "REFLECT",
+        "name": "REFLECT",
+        "description": "Reflect the enemy's attack.",
+        "attributes": {
+            "REFLECT": {
+                "point": 0,
+                "percent": 20
+            }
+        }
+    },
+    "LIFE_STEAL": {
+        "code": "LIFE_STEAL",
+        "name": "LIFE_STEAL",
+        "description": "Steal the enemy's life.",
+        "attributes": {
+            "LIFE_STEAL": {
+                "point": 0,
+                "percent": 25
+            }
+        }
+    },
+    "RISING_FURY": {
+        "code": "RISING_FURY",
+        "name": "RISING_FURY",
+        "description": "Fury rises.",
+        "attributes": {
+            "ATTACK": {
+                "point": 0,
+                "percentPerTime": 5
+            }
+        }
+    },
+    "FATAL_BLOW": {
+        "code": "FATAL_BLOW",
+        "name": "FATAL_BLOW",
+        "description": "Blow the enemy.",
+        "attributes": {
+            "ATTACK": {
+                "point": 0,
+                "percent": 200
+            },
+            "CRIT_RATE": {
+                "point": 0,
+                "percent": 33
+            }
+        }
+    }
+}

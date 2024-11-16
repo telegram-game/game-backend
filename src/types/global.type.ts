@@ -13,6 +13,7 @@ declare global {
     export interface HeroAttributeValue {
       point: number;
       percent: number;
+      percentPerTime: number;
     }
   }
 }
