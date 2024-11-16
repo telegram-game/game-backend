@@ -9,9 +9,6 @@ export interface Configuration {
   port: number;
   env: Environment;
   logLevel: LogLevel;
-  isUneyGuardEnabled: boolean;
-  isPresharedKeyEnabled: boolean;
-  serverUrl: string;
   postGresUser: string;
   postGresPassword: string;
   postGresHost: string;
@@ -22,29 +19,9 @@ export interface Configuration {
   redisMode: string;
   redisClusterNodes: string[];
   httpRequestTimeout: number;
-  retryTimesWG: number;
-  retryMultiplierWG: number;
-  retryBaseWG: number;
-  configManagerServicerUrl: string;
-  removePeersBeforeSeconds: number;
-  jwtPublicKey: string;
-  removePeerRetryAttempts: number;
-  removePeerRetryBackoff: number;
-  blacklistRetryAttempts: number;
-  blacklistRetryBackoff: number;
-  getPeerInformationAssociatedDeepLevel: number;
-  getPeerInformationAssociatedTimeRange: number;
   ignoreAuthGuard: boolean;
-  rateLimit: {
-    enabled: boolean;
-    limit: number;
-    timeWindow: number;
-  };
-  circuitBreaker: {
-    enabled: boolean;
-    successThreshold: number;
-    failureThreshold: number;
-    openToHalfOpenWaitTimeSeconds: number;
-  };
-  hmacSecret: string;
+  jwtAccesstokenPrivateKey?: string;
+  jwtAccesstokenPublicKey?: string;
+  jwtRefreshtokenPrivateKey?: string;
+  jwtRefreshtokenPublicKey?: string;
 }

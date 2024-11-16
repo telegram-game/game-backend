@@ -1,85 +1,140 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# LiveVPNConfigManager
+* *Service name:* game-api-service
+* *Framework:* NestJS
+* *DatabaseORM:* Prisma
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Source code structure
+```
+├── README.md
+├── nest-cli.json
+├── yarn.lock
+├── package.json
+├── prisma
+├── src
+│   ├── app.module.ts
+│   ├── main.ts
+│   ├── config
+│       ├── configuration.ts
+│       └── validation.ts
+│   ├── constants (for service constants)
+│   ├── decorators (for some decorators)
+│   ├── exceptions (exception modoles)
+│   ├── filters (middleware for error handler)
+│   ├── interceptors (service interceptors)
+│   ├── interfaces (for the service interfaces)
+│   ├── middlewares (service middlewares)
+│   ├── models (some service common models)
+│   ├── modules
+│       ├── health
+│       ├── http
+│       ├── loggers
+│       ├── prisma (prisma service)
+│       ├── shared (the folder to define the shared services)
+│       └── ... (domain modules)
+│   ├── types
+│   ├── utils
+├── test
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
+├── migrations.sh
+├── Dockerfile
+└── tsconfig.json
+```
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# ENV(s)
+## Common configuration
+|Name|Description|Default value|
+|---|---|---|
+|ENVIRONMENT| The environment of the server(local,development,qa,staging,prodution)|local|
+|TZ|The timezone of the service|UTC|
+|LOG_LEVEL|The log level of the service (error,warn,debug,info)|info|
+|PORT|The service port|3000|
+|HTTP_REQUEST_TIMEOUT|The http request timeout for all internal requests|10000|
+|CONFIG_MANAGER_SERVICE_URL|The config manager service url|http://localhost:3000|
+## The API Service
+|Name|Description|Default value|
+|---|---|---|
+|APP_NAME=**GAME_API**|The specific app name|API|
+|POSTGRESQL_USER| user of postgres db||
+|POSTGRESQL_PASSWORD| password of postgres db||
+|POSTGRESQL_HOST| host of postgres db||
+|POSTGRESQL_DB| postgres db||
+|POSTGRESQL_PORT| port of postgres db||
+|REDIS_MODE| client or cluster|client|
+|REDIS_HOST| client redis host|localhost|
+|REDIS_PORT| client redis port|6379|
+|REDIS_CLUSTER_NODES| The list of redis node in cluster mode. Split by comma.||
+|IGNORE_AUTH_GUARD|Ignore auth guard check|true|
+|JWT_ACCESS_TOKEN_PRIVATE_KEY| The private key to sign access token ||
+|JWT_ACCESS_TOKEN_PUBLIC_KEY| The public key to verify access token ||
+|JWT_REFRESH_TOKEN_PRIVATE_KEY| The private key to sign refresh token ||
+|JWT_REFRESH_TOKEN_PUBLIC_KEY| The public key to verify refresh token ||
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
+# How to install dependencies
+## For dev
+```
 $ yarn install
 ```
-
-## Compile and run the project
-
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+## For production
+```
+$ yarn install --frozen-lockfile 
 ```
 
-## Run tests
+# How to create/ apply new migration
+## Create new migration
+```
+$ ./migration.sh <migration_name>
+```
+## Apply the migration
+```
+$ set -o allexport && source .env
+$ ./migrate/run.sh
+```
+Note: Please setup the `DATABASE_URL` point to the database engine we want to migrate
 
-```bash
-# unit tests
-$ yarn run test
+# How to run the service
+* Copy the `.env.example` to `.env` and config the env environment
+* Install the dependencies
+* Install prisma client 
+    ```
+    $ npx prisma generate
+    ```
+* Run the command to run the service
+    ```
+    $ yarn start:dev
+    ```
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+# How to run the unit test / coverage test
+## Unit test
+```
+$ yarn test
 ```
 
-## Resources
+## Coverage test
+```
+$ yarn test:cov
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Run in container (docker)
+### Build the docker image
+```
+$ docker build -t game-api-image .
+```
+### Run docker container
+## The GAME_API Service
+```
+$ docker run --name=game-api --env=APP_NAME=GAME_API --env=TZ=UTC --env=NODE_ENV=development --env=PORT=3000 --env=POSTGRESQL_USER="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_HOST="localhost" --env=POSTGRESQL_DB=livevpn-db --env=POSTGRESQL_PORT=5432 --env=REDIS_MODE="client" --env=REDIS_HOST="localhost" --env=REDIS_PORT=6379 -p 3000:3000 -d game-api-image
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Run the migration in container (docker)
+### Build the docker image
+```
+$ docker build -t lvpn-config-manager-migration-image -f migrate/Dockerfile .
+```
+### Run migration docker container
+```
+$ docker run --name=lvpn-game-api-migration --env=POSTGRESQL_USER="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_PASSWORD="postgres" --env=POSTGRESQL_HOST="localhost" --env=POSTGRESQL_DB=livevpn-db --env=POSTGRESQL_PORT=5432  -d lvpn-config-manager-migration-image
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```

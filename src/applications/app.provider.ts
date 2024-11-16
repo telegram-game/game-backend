@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { ApiAppModule, ListenerAppModule } from './app.module';
+import { GameApiAppModule } from './app.module';
 
 export type AppName = 'API' | 'LISTENER';
 
 @Injectable()
 export class AppProvider {
-  public getAppModule(): ApiAppModule | ListenerAppModule {
-    const appName: AppName = (process.env.APP_NAME || 'API') as AppName;
+  public getAppModule(): GameApiAppModule {
+    const appName: AppName = (process.env.APP_NAME || 'GAME_API') as AppName;
     return (
       {
-        API: ApiAppModule,
-        LISTENER: ListenerAppModule,
-      }[appName] || ApiAppModule
+        GAME_API: GameApiAppModule,
+      }[appName] || GameApiAppModule
     );
   }
   public getAppName(): AppName {
-    return (process.env.APP_NAME || 'API') as AppName;
+    return (process.env.APP_NAME || 'GAME_API') as AppName;
   }
 }
 
