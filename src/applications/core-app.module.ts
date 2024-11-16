@@ -7,11 +7,7 @@ import {
 } from '@nestjs/common';
 import { HealthModule } from '../modules/health';
 import { LoggerModule } from '../modules/loggers';
-import {
-  APP_FILTER,
-  APP_INTERCEPTOR,
-  APP_PIPE,
-} from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { CoreResponseInterceptor, LoggingInterceptor } from '../interceptors';
 import { CoreExceptionFilter } from '../filters';
 import {

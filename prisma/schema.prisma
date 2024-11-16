@@ -108,7 +108,7 @@ model UserGameProfiles {
   id           String          @id @default(cuid()) @map("id")
   userId       String          @map("user_id")
   house        GameHouse       @map("house")
-  class        String?         @default("Warrior")
+  class        String?         @map("class")
   createdAt    DateTime        @default(now()) @map("created_at")
   updatedAt    DateTime        @updatedAt @map("updated_at")
   user         User            @relation(fields: [userId], references: [id])

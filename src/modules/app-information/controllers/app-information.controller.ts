@@ -1,8 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppInformationService } from '../services/app-information.service';
-import {
-  AppInformationResponse,
-} from '../models/app-information.model.dto';
+import { AppInformationResponse } from '../models/app-information.model.dto';
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,

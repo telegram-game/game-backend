@@ -54,7 +54,7 @@ export class RequestContextMiddleware implements NestMiddleware {
           Buffer.from(token.split('.')[1], 'base64').toString(),
         );
         request.context.userInfo = {
-          userId: userInfo?.sub,
+          userId: userInfo?.userId,
           deviceId: userInfo?.uniqueDeviceId,
         };
 
@@ -69,6 +69,7 @@ export class RequestContextMiddleware implements NestMiddleware {
         );
       }
     }
+
     asyncLocalStorage.run(request.context, () => next());
   }
 
