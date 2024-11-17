@@ -12,19 +12,29 @@ import { HeroSkillRepository } from './repositories/hero-skill.repository';
 import { InventoryService } from './services/inventory.service';
 import { InventoryAttributeRepository } from './repositories/inventory-attribute.repository';
 import { InventoryController } from './controllers/inventory.controller';
+import { HeroItemRepository } from './repositories/hero-item.repository';
+import { HeroItemController } from './controllers/hero-item.controller';
+import { HeroItemService } from './services/hero-item.service';
 @Module({
   imports: [PrismaModule],
-  controllers: [GameProfileController, HeroController, InventoryController],
+  controllers: [
+    GameProfileController,
+    HeroController,
+    InventoryController,
+    HeroItemController,
+  ],
   providers: [
     HeroRepository,
     HeroAttributeRepository,
     HeroSkillRepository,
+    HeroItemRepository,
     InventoryRepository,
     InventoryAttributeRepository,
     GameProfileRepository,
     HeroService,
     GameProfileService,
     InventoryService,
+    HeroItemService,
   ],
   exports: [],
 })

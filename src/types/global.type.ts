@@ -9,6 +9,7 @@ declare global {
     }
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-namespace
   namespace PrismaJson {
     export interface HeroAttributeValue {
       point: number;

@@ -12,6 +12,23 @@ export class InventoryRepository extends BaseRepository {
     super(prismaService);
   }
 
+  async getById(
+    id: string,
+    userId: string,
+    gameProfileId: string,
+  ): Promise<FullInventoryRepositoryModel> {
+    return this.client.userGameInventories.findFirst({
+      where: {
+        userId,
+        userGameProfileId: gameProfileId,
+        id,
+      },
+      include: {
+        userGameInventoryAttributes: true,
+      },
+    });
+  }
+
   async getByIds(
     ids: string[],
     userId: string,
@@ -24,6 +41,21 @@ export class InventoryRepository extends BaseRepository {
         id: {
           in: ids,
         },
+      },
+      include: {
+        userGameInventoryAttributes: true,
+      },
+    });
+  }
+
+  async getAll(
+    userId: string,
+    gameProfileId: string,
+  ): Promise<FullInventoryRepositoryModel[]> {
+    return this.client.userGameInventories.findMany({
+      where: {
+        userId,
+        userGameProfileId: gameProfileId,
       },
       include: {
         userGameInventoryAttributes: true,

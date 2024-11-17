@@ -1,7 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
-import { FullInventoryRepositoryModel } from '../models/inventory.model.dto';
 import { UserGameHeroSkills } from '@prisma/client';
 
 @Injectable({
@@ -12,9 +11,7 @@ export class HeroSkillRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async create(
-    data: Partial<UserGameHeroSkills>,
-  ): Promise<UserGameHeroSkills> {
+  async create(data: Partial<UserGameHeroSkills>): Promise<UserGameHeroSkills> {
     return this.client.userGameHeroSkills.create({
       data: data as UserGameHeroSkills,
     });

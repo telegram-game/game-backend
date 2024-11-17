@@ -1,11 +1,23 @@
+import { IsString } from 'class-validator';
+
 export class EquipRequest {
-    gameProfileId: string;
-    heroId: string;
-    inventoryId: string;
+  @IsString()
+  gameProfileId: string;
+
+  @IsString()
+  heroId: string;
+
+  @IsString()
+  inventoryId: string;
 }
 
 export class UnEquipRequest {
-    gameProfileId: string;
-    heroId: string;
-    inventoryId: string;
+  @IsString()
+  gameProfileId: string;
+
+  @IsString()
+  heroId: string;
+
+  @IsString()
+  inventoryId: string;
 }

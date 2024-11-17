@@ -11,7 +11,10 @@ export class GameProfileRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async getByIdOrFirst(userId: string, gameProfileId?: string): Promise<UserGameProfiles> {
+  async getByIdOrFirst(
+    userId: string,
+    gameProfileId?: string,
+  ): Promise<UserGameProfiles> {
     return this.client.userGameProfiles.findFirst({
       where: {
         userId,

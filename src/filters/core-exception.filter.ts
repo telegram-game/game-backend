@@ -97,7 +97,7 @@ export class CoreExceptionFilter implements ExceptionFilter {
         break;
       }
       case exception instanceof ForbiddenException: {
-        const forbiddenException = this.handleForbiddenException(exception);
+        const forbiddenException = this.handleForbiddenException();
         errorCode = forbiddenException.errorCode;
         errorMessage = forbiddenException.errorMessage;
         break;
@@ -139,7 +139,7 @@ export class CoreExceptionFilter implements ExceptionFilter {
     };
   }
 
-  private handleForbiddenException(exception: ForbiddenException) {
+  private handleForbiddenException() {
     return {
       errorCode: ERROR_CODES.FORBIDDEN,
       errorMessage: ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],

@@ -3,7 +3,7 @@ import { GameProfileRepository } from '../repositories/game-profile.repository';
 import { FullGameProfile } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
 import { GameHouse, UserGameProfiles } from '@prisma/client';
-import {configurationData} from '../../../data'
+import { configurationData } from '../../../data';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -16,7 +16,10 @@ export class GameProfileService {
     private readonly heroService: HeroService,
   ) {}
 
-  async getByIdOrFirst(userId: string, gameProfileId?: string): Promise<UserGameProfiles> {
+  async getByIdOrFirst(
+    userId: string,
+    gameProfileId?: string,
+  ): Promise<UserGameProfiles> {
     return this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
   }
 

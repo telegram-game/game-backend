@@ -18,9 +18,7 @@ export class BaseInventoryService {
     protected readonly gameProfileService: GameProfileService,
     protected readonly supportService: SupportService,
     protected readonly prismaService: PrismaService,
-  ) { }
+  ) {}
 
-  async create() {
-    
-  }
+  async create() {}
 }

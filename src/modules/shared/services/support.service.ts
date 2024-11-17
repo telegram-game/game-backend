@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SupportService {
-  randomWithRate(
-    rates: Record<string, number>,
-  ): string {
+  randomWithRate(rates: Record<string, number>): string {
     // Check if the rates are valid
     const totalRate = Object.values(rates).reduce((acc, rate) => acc + rate, 0);
     if (totalRate !== 100) {
@@ -35,7 +33,7 @@ export class SupportService {
     if (count > list.length) {
       return list;
     }
-    
+
     const result = [];
     const randomIndex = new Set<number>();
     while (randomIndex.size < count) {
@@ -57,11 +55,14 @@ export class SupportService {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  buildValue(data: {value?: number, min?: number, max?: number}, multiplier: number): number {
+  buildValue(
+    data: { value?: number; min?: number; max?: number },
+    multiplier: number,
+  ): number {
     if (!data) {
       return 0;
     }
-    
+
     if (data.value) {
       return data.value * multiplier;
     }

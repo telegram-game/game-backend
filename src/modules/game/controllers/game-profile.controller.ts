@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { FullHero } from '../models/hero.model.dto';
 import asyncLocalStorage from 'src/storage/async_local';
 import { GameProfileService } from '../services/game-profile.service';
 import { FullGameProfile } from '../models/game-profile.dto';

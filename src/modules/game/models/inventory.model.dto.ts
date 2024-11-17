@@ -9,6 +9,11 @@ export type FullInventoryRepositoryModel = UserGameInventories & {
   userGameInventoryAttributes: UserGameInventoryAttributes[];
 };
 
+export class GetAllInventoryRequest {
+  @IsString()
+  gameProfileId: string;
+}
+
 export class BuyChestRequest {
   @IsString()
   chestCode: string;

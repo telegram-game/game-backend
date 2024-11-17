@@ -1,8 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
-import { FullInventoryRepositoryModel } from '../models/inventory.model.dto';
-import { UserGameInventories, UserGameInventoryAttributes } from '@prisma/client';
+import { UserGameInventoryAttributes } from '@prisma/client';
 
 @Injectable({
   scope: Scope.REQUEST,

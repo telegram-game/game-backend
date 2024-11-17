@@ -1,8 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
-import { FullHeroRepositoryModel } from '../models/hero.model.dto';
-import { UserGameHeroAttributes, UserGameHeros } from '@prisma/client';
+import { UserGameHeroAttributes } from '@prisma/client';
 
 @Injectable({
   scope: Scope.REQUEST,

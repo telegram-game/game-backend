@@ -29,7 +29,10 @@ export class AuthService {
     );
   }
 
-  async generateTokens(userId: string, profile?: Record<string, string>): Promise<LoginResponse> {
+  async generateTokens(
+    userId: string,
+    profile?: Record<string, string>,
+  ): Promise<LoginResponse> {
     const accessToken = await this.jwtService.signAsync(
       { userId, profile },
       {

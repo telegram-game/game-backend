@@ -1,8 +1,11 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { LoginProviderRequest, LoginResponse, RefreshTokenRequest } from '../models/auth.dto';
+import {
+  LoginProviderRequest,
+  LoginResponse,
+  RefreshTokenRequest,
+} from '../models/auth.dto';
 import { UserService } from '../services/user.service';
 import { NotRequireAuthentication } from 'src/decorators';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../services/auth.service';
 import { randomUUID } from 'crypto';
 

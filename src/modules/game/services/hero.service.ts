@@ -49,27 +49,28 @@ export class HeroService extends BaseHeroService {
       return fullHero;
     }
 
-    await this.prismaService.$transaction(async (tx: PrismaService) => {
-      this.heroRepository.joinTransaction(tx);
-      this.heroSkillRepository.joinTransaction(tx);
+    await this.prismaService
+      .$transaction(async (tx: PrismaService) => {
+        this.heroRepository.joinTransaction(tx);
+        this.heroSkillRepository.joinTransaction(tx);
 
-      // Add hero
-      const hero = await this.heroRepository.createDefault(
-        userId,
-        userGameProfile.id,
-      );
+        // Add hero
+        const hero = await this.heroRepository.createDefault(
+          userId,
+          userGameProfile.id,
+        );
 
-      // Add skill
-      await this.heroSkillRepository.create({
-        userId,
-        userGameHeroId: hero.id,
-        skill: this.defaultSkill,
+        // Add skill
+        await this.heroSkillRepository.create({
+          userId,
+          userGameHeroId: hero.id,
+          skill: this.defaultSkill,
+        });
+      })
+      .finally(() => {
+        this.heroRepository.leftTransaction();
+        this.heroSkillRepository.leftTransaction();
       });
-      
-    }).finally(() => {
-      this.heroRepository.leftTransaction();
-      this.heroSkillRepository.leftTransaction();
-    });
 
     return await this.getFullFirst(userId, userGameProfile);
   }
