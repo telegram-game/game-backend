@@ -12,6 +12,9 @@ export class SkillData {
       percentPerTime?: number;
     };
   };
+  condition?: {
+    [key: string]: number;
+  }
 }
 
 export type SkillConfigData = {

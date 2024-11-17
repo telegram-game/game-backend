@@ -39,6 +39,7 @@
         "attributes": {
             "ATTACK": {
                 "point": 0,
+                "percent": 0,
                 "percentPerTime": 5
             }
         }
@@ -47,15 +48,9 @@
         "code": "FATAL_BLOW",
         "name": "FATAL_BLOW",
         "description": "Blow the enemy.",
-        "attributes": {
-            "ATTACK": {
-                "point": 0,
-                "percent": 200
-            },
-            "CRIT_RATE": {
-                "point": 0,
-                "percent": 33
-            }
+        "attributes": {},
+        "condition": {
+            "attackedCount": 3
         }
     }
 }

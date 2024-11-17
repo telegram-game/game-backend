@@ -2,6 +2,22 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SupportService {
+  calculateWithPointAndPercent(
+    value: number,
+    point: number = 0,
+    percent: number = 0,
+  ): number {
+    return point + Math.floor((value * percent) / 100);
+  }
+
+  calculateWithPercent(value: number, percent: number = 0): number {
+    return Math.floor((value * percent) / 100);
+  }
+
+  randomRate(rate: number): boolean {
+    return Math.random() * 100 < rate;
+  }
+
   randomWithRate(rates: Record<string, number>): string {
     // Check if the rates are valid
     const totalRate = Object.values(rates).reduce((acc, rate) => acc + rate, 0);

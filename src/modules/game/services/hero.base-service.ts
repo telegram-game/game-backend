@@ -27,6 +27,9 @@ export class BaseHeroService {
   protected readonly lifeStealAttributes: HeroAttribute[] = [
     HeroAttribute.LIFE_STEAL,
   ];
+  protected readonly reflectAttributes: HeroAttribute[] = [
+    HeroAttribute.REFLECT,
+  ];
   protected readonly lifeStealSkills: HeroSkill[] = [HeroSkill.LIFE_STEAL];
   protected readonly reflectSkills: HeroSkill[] = [HeroSkill.REFLECT];
   protected readonly hpRegenSkills: HeroSkill[] = [];
@@ -208,7 +211,7 @@ export class BaseHeroService {
 
     return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
-        if (this.lifeStealAttributes.includes(attribute.attribute)) {
+        if (this.reflectAttributes.includes(attribute.attribute)) {
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }

@@ -1,6 +1,5 @@
+import { HouseData } from 'src/data/houses';
 import { FullHero } from './hero.model.dto';
-
-export class HouseData {}
 
 export class FullGameProfile {
   id: string;
