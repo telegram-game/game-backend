@@ -76,6 +76,10 @@ enum ItemType {
   ST
 }
 
+enum Tokens {
+  INGAME
+}
+
 model User {
   id                          String                        @id @default(cuid()) @map("id")
   username                    String?                       @unique @map("username")
@@ -92,6 +96,8 @@ model User {
   userGameInventories         UserGameInventories[]
   userGameHeroItems           UserGameHeroItems[]
   userGameInventoryAttributes UserGameInventoryAttributes[]
+  UserTokenBalances           UserTokenBalances[]
+  UserTokenBalanceHistories   UserTokenBalanceHistories[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -218,4 +224,31 @@ model UserGameHeroSkills {
   userGameHero   UserGameHeros @relation(fields: [userGameHeroId], references: [id])
 
   @@map("user_game_hero_skills")
+}
+
+model UserTokenBalances {
+  id        String   @id @default(cuid()) @map("id")
+  userId    String   @map("user_id")
+  token     Tokens   @default(INGAME) @map("token")
+  balance   Int      @default(0) @map("balance")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, token])
+  @@map("user_token_balances")
+}
+
+model UserTokenBalanceHistories {
+  id          String   @id @default(uuid()) @map("id")
+  userId      String   @map("user_id")
+  token       Tokens   @default(INGAME) @map("token")
+  fromBalance Int      @map("from_balance")
+  toBalance   Int      @map("to_balance")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, token, createdAt])
+  @@map("user_token_balance_histories")
 }

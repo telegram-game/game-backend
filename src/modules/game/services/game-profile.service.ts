@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { GameProfileRepository } from '../repositories/game-profile.repository';
 import { FullGameProfile } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
-import { GameHouse, UserGameProfiles } from '@prisma/client';
+import { GameHouse, Tokens, UserGameProfiles } from '@prisma/client';
 import { configurationData } from '../../../data';
+import { UserBalanceService } from 'src/modules/balance';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -13,6 +14,7 @@ export class GameProfileService {
   private readonly defaultHouse = GameHouse.HAMSTERS;
   constructor(
     private readonly gameProfileRepository: GameProfileRepository,
+    private readonly userBalanceService: UserBalanceService,
     private readonly heroService: HeroService,
   ) {}
 
@@ -23,8 +25,21 @@ export class GameProfileService {
     return this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
   }
 
-  async getFullFirst(userId: string): Promise<FullGameProfile> {
-    return this.createOrGetFullFirst(userId);
+  async getFullFirst(userId: string, options?: {
+    includeBalances?: boolean;
+  }): Promise<FullGameProfile> {
+    const fullGameProfile = await this.createOrGetFullFirst(userId);
+    if (options?.includeBalances) {
+      const balances = await this.userBalanceService.gets(userId);
+      fullGameProfile.balances = {};
+      Object.keys(Tokens).forEach((key) => {
+        const token = Tokens[key as keyof typeof Tokens];
+        const userToken = balances.find((balance) => balance.token === token);
+        fullGameProfile.balances[token] = userToken?.balance || 0;
+      });
+    }
+    
+    return fullGameProfile;
   }
 
   async createOrGetFullFirst(userId: string): Promise<FullGameProfile> {

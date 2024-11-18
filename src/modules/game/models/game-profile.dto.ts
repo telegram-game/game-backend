@@ -1,6 +1,6 @@
 import { HouseData } from 'src/data/houses';
 import { FullHero } from './hero.model.dto';
-import { GameHouse } from '@prisma/client';
+import { GameHouse, Tokens } from '@prisma/client';
 import { IsEnum, IsString } from 'class-validator';
 
 export class FullGameProfile {
@@ -8,6 +8,9 @@ export class FullGameProfile {
   houseData: HouseData;
   skillData: any;
   hero: FullHero;
+  balances?: {
+    [key in Tokens]?: number;
+  }
 }
 
 export class ChangeHouseReqeust {
