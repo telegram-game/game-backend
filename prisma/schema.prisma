@@ -98,6 +98,7 @@ model User {
   userGameInventoryAttributes UserGameInventoryAttributes[]
   UserTokenBalances           UserTokenBalances[]
   UserTokenBalanceHistories   UserTokenBalanceHistories[]
+  UserTokenClaimInfomations   UserTokenClaimInfomations[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -230,7 +231,7 @@ model UserTokenBalances {
   id        String   @id @default(cuid()) @map("id")
   userId    String   @map("user_id")
   token     Tokens   @default(INGAME) @map("token")
-  balance   Int      @default(0) @map("balance")
+  balance   Float    @default(0.0) @map("balance")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id])
@@ -243,12 +244,26 @@ model UserTokenBalanceHistories {
   id          String   @id @default(uuid()) @map("id")
   userId      String   @map("user_id")
   token       Tokens   @default(INGAME) @map("token")
-  fromBalance Int      @map("from_balance")
-  toBalance   Int      @map("to_balance")
+  fromBalance Float    @map("from_balance")
+  toBalance   Float    @map("to_balance")
+  metaData    Json?    @map("meta_data")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   user        User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, token, createdAt])
   @@map("user_token_balance_histories")
+}
+
+model UserTokenClaimInfomations {
+  id          String   @id @default(cuid()) @map("id")
+  userId      String   @map("user_id")
+  token       Tokens   @default(INGAME) @map("token")
+  lastClaimAt DateTime @map("last_claim_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, token])
+  @@map("user_token_claim_infomations")
 }

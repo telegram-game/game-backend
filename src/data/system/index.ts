@@ -17,6 +17,7 @@ export class SystemConfigData {
   baseCritDamageByLevel: {
     [key in Star]?: number;
   };
+  baseIngameBalanceInvestSpeedInSecond: number;
 }
 
 export const system = systemData as SystemConfigData;

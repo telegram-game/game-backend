@@ -4,7 +4,7 @@ import { FullGameProfile } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
 import { GameHouse, Tokens, UserGameProfiles } from '@prisma/client';
 import { configurationData } from '../../../data';
-import { UserBalanceService } from 'src/modules/balance';
+import { BalanceService } from 'src/modules/shared/services/balance.service';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -14,7 +14,7 @@ export class GameProfileService {
   private readonly defaultHouse = GameHouse.HAMSTERS;
   constructor(
     private readonly gameProfileRepository: GameProfileRepository,
-    private readonly userBalanceService: UserBalanceService,
+    private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
   ) {}
 
@@ -30,12 +30,12 @@ export class GameProfileService {
   }): Promise<FullGameProfile> {
     const fullGameProfile = await this.createOrGetFullFirst(userId);
     if (options?.includeBalances) {
-      const balances = await this.userBalanceService.gets(userId);
+      const balances = await this.balanceService.getBalances(userId);
       fullGameProfile.balances = {};
       Object.keys(Tokens).forEach((key) => {
         const token = Tokens[key as keyof typeof Tokens];
         const userToken = balances.find((balance) => balance.token === token);
-        fullGameProfile.balances[token] = userToken?.balance || 0;
+        fullGameProfile.balances[token] = userToken?.balance || 0.0;
       });
     }
     

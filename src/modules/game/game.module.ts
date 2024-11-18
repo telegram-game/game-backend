@@ -17,9 +17,9 @@ import { HeroItemController } from './controllers/hero-item.controller';
 import { HeroItemService } from './services/hero-item.service';
 import { GameMatchController } from './controllers/game-match.controller';
 import { GameMatchService } from './services/game-match.service';
-import { BalanceModule } from '../balance/balance.module';
+
 @Module({
-  imports: [PrismaModule, BalanceModule],
+  imports: [PrismaModule],
   controllers: [
     GameProfileController,
     HeroController,

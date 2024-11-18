@@ -33,5 +33,7 @@
         "3": 100,
         "4": 100,
         "5": 100
-    }
+    },
+    "baseIngameBalanceInvestSpeedInSecond": 0.00028,
+    "baseIngameBalanceInvestSpeedInSecondDescription": "1 token per 1 hour"
 }

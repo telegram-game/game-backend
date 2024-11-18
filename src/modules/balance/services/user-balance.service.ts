@@ -9,4 +9,8 @@ export class UserBalanceService {
   async gets(userId: string): Promise<UserTokenBalances[]> {
     return await this.userBalanceRepository.gets(userId);
   }
+
+  async claim(): Promise<number> {
+    return 0;
+  }
 }
