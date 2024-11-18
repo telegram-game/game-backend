@@ -48,4 +48,21 @@ export class GameProfileService {
       hero: fullHero,
     };
   }
+
+  async changeHouse(userId: string, gameProfileId: string, house: GameHouse): Promise<void> {
+    let gameProfile = await this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
+    if (!gameProfile) {
+      await this.gameProfileRepository.create({
+        userId,
+        house: house,
+      });
+      return;
+    }
+
+    if (gameProfile.house === house) {
+      return;
+    }
+    
+    await this.gameProfileRepository.update({ id: gameProfile.id, house });
+  }
 }

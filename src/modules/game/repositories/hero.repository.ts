@@ -12,6 +12,26 @@ export class HeroRepository extends BaseRepository {
     super(prismaService);
   }
 
+  async getFullById(
+    userId: string,
+    userGameProfileId: string,
+    heroId: string,
+  ): Promise<FullHeroRepositoryModel> {
+    return this.client.userGameHeros.findFirst({
+      where: {
+        id: heroId,
+        userId,
+        userGameProfileId: userGameProfileId,
+      },
+      include: {
+        userGameProfile: true,
+        userGameHeroAttributes: true,
+        userGameHeroItems: true,
+        userGameHeroSkills: true,
+      },
+    });
+  }
+
   async getFullFirst(
     userId: string,
     userGameProfileId: string,

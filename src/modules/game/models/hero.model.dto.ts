@@ -7,6 +7,7 @@ import {
   HeroSkill,
 } from '@prisma/client';
 import { FullInventoryRepositoryModel } from './inventory.model.dto';
+import { IsEnum, IsString } from 'class-validator';
 
 export class HeroAttributeValue {
   point: number;
@@ -43,3 +44,14 @@ export type FullHeroRepositoryModel = UserGameHeros & {
   userGameHeroItems: UserGameHeroItems[];
   userGameHeroSkills: UserGameHeroSkills[];
 };
+
+export class ChangeSkillRequest {
+  @IsString()
+  gameProfileId: string;
+
+  @IsString()
+  heroId: string
+
+  @IsEnum(HeroSkill)
+  skill: HeroSkill;
+}

@@ -113,7 +113,7 @@ model UserProfiles {
 
 model UserGameProfiles {
   id                  String                @id @default(cuid()) @map("id")
-  userId              String                @map("user_id")
+  userId              String                @unique @map("user_id")
   house               GameHouse             @map("house")
   class               String?               @map("class")
   createdAt           DateTime              @default(now()) @map("created_at")
@@ -128,7 +128,7 @@ model UserGameProfiles {
 model UserGameHeros {
   id                     String                   @id @default(cuid()) @map("id")
   userId                 String                   @unique @map("user_id") // user can have only one hero now
-  userGameProfileId      String                   @map("user_game_profile_id")
+  userGameProfileId      String                   @unique @map("user_game_profile_id")
   level                  Int                      @default(1) @map("level")
   totalPower             Int                      @default(1) @map("total_power")
   createdAt              DateTime                 @default(now()) @map("created_at")
@@ -210,7 +210,7 @@ model UserGameHeroItems {
 model UserGameHeroSkills {
   id             String        @id @default(cuid()) @map("id")
   userId         String        @map("user_id")
-  userGameHeroId String        @map("user_game_hero_id")
+  userGameHeroId String        @unique @map("user_game_hero_id")
   skill          HeroSkill     @map("skill")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")

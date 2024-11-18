@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { FullHero } from '../models/hero.model.dto';
 import { HeroRepository } from '../repositories/hero.repository';
 import { BaseHeroService } from './hero.base-service';
@@ -6,6 +6,7 @@ import { HeroSkill, UserGameProfiles } from '@prisma/client';
 import { PrismaService } from 'src/modules/prisma';
 import { InventoryRepository } from '../repositories/inventory.repository';
 import { HeroSkillRepository } from '../repositories/hero-skill.repository';
+import { BusinessException } from 'src/exceptions';
 
 @Injectable()
 export class HeroService extends BaseHeroService {
@@ -73,5 +74,19 @@ export class HeroService extends BaseHeroService {
       });
 
     return await this.getFullFirst(userId, userGameProfile);
+  }
+
+
+  async changeSkill(userId: string, heroId: string, skill: HeroSkill): Promise<void> {
+    const skillData = await this.heroSkillRepository.getFirstByHeroId(userId, heroId);
+    if (!skill) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'SKILL_NOT_FOUND', errorMessage: 'Skill not found'});
+    }
+
+    if (skillData.skill === skill) {
+      return;
+    }
+    
+    await this.heroSkillRepository.update({ id: skillData.id, skill });
   }
 }

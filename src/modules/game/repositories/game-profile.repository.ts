@@ -36,4 +36,13 @@ export class GameProfileRepository extends BaseRepository {
       data: data as UserGameProfiles,
     });
   }
+
+  async update(data: Partial<UserGameProfiles>): Promise<UserGameProfiles> {
+    return this.client.userGameProfiles.update({
+      where: {
+        id: data.id,
+      },
+      data: data as UserGameProfiles,
+    });
+  }
 }

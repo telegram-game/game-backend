@@ -11,8 +11,26 @@ export class HeroSkillRepository extends BaseRepository {
     super(prismaService);
   }
 
+  async getFirstByHeroId(userId: string, heroId: string): Promise<UserGameHeroSkills> {
+    return this.client.userGameHeroSkills.findFirst({
+      where: {
+        userGameHeroId: heroId,
+        userId,
+      }
+    });
+  }
+
   async create(data: Partial<UserGameHeroSkills>): Promise<UserGameHeroSkills> {
     return this.client.userGameHeroSkills.create({
+      data: data as UserGameHeroSkills,
+    });
+  }
+
+  async update(data: Partial<UserGameHeroSkills>): Promise<UserGameHeroSkills> {
+    return this.client.userGameHeroSkills.update({
+      where: {
+        id: data.id,
+      },
       data: data as UserGameHeroSkills,
     });
   }
