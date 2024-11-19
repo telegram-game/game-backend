@@ -9,6 +9,6 @@ import { AuthService } from './services/auth.service';
   imports: [PrismaModule],
   controllers: [AuthController],
   providers: [UserProfileRepository, UserRepository, AuthService, UserService],
-  exports: [],
+  exports: [UserService],
 })
 export class AuthModule {}

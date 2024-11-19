@@ -9,7 +9,10 @@ import { HeroService } from '../services/hero.service';
   version: ['1.0'],
 })
 export class HeroController {
-  constructor(private gameProfileService: GameProfileService, private heroService: HeroService) {}
+  constructor(
+    private gameProfileService: GameProfileService,
+    private heroService: HeroService,
+  ) {}
 
   @Get()
   async getFirst(): Promise<FullHero> {

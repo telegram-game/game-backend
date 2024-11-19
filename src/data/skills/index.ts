@@ -14,7 +14,7 @@ export class SkillData {
   };
   condition?: {
     [key: string]: number;
-  }
+  };
 }
 
 export type SkillConfigData = {

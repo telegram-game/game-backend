@@ -1,3 +1,4 @@
+import { Tokens } from '@prisma/client';
 import { Star } from '../common/common.model';
 import systemData from './system.json';
 
@@ -17,7 +18,13 @@ export class SystemConfigData {
   baseCritDamageByLevel: {
     [key in Star]?: number;
   };
-  baseIngameBalanceInvestSpeedInSecond: number;
+  baseTokenInvestSpeed: {
+    [key in Tokens]?: {
+      speed: number;
+      gapTime: number;
+      description: string;
+    };
+  };
 }
 
 export const system = systemData as SystemConfigData;

@@ -10,7 +10,7 @@ export class FullGameProfile {
   hero: FullHero;
   balances?: {
     [key in Tokens]?: number;
-  }
+  };
 }
 
 export class ChangeHouseReqeust {

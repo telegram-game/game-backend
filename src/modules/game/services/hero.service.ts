@@ -76,17 +76,27 @@ export class HeroService extends BaseHeroService {
     return await this.getFullFirst(userId, userGameProfile);
   }
 
-
-  async changeSkill(userId: string, heroId: string, skill: HeroSkill): Promise<void> {
-    const skillData = await this.heroSkillRepository.getFirstByHeroId(userId, heroId);
+  async changeSkill(
+    userId: string,
+    heroId: string,
+    skill: HeroSkill,
+  ): Promise<void> {
+    const skillData = await this.heroSkillRepository.getFirstByHeroId(
+      userId,
+      heroId,
+    );
     if (!skill) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'SKILL_NOT_FOUND', errorMessage: 'Skill not found'});
+      throw new BusinessException({
+        status: HttpStatus.BAD_REQUEST,
+        errorCode: 'SKILL_NOT_FOUND',
+        errorMessage: 'Skill not found',
+      });
     }
 
     if (skillData.skill === skill) {
       return;
     }
-    
+
     await this.heroSkillRepository.update({ id: skillData.id, skill });
   }
 }

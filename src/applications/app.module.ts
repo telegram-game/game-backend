@@ -7,7 +7,7 @@ import { AppInformationModule } from '../modules/app-information';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from 'src/decorators/auth.guard';
 import { SharedModule } from 'src/modules/shared/shared.module';
-import { CachingModule } from '../modules/caching/caching.module';
+// import { CachingModule } from '../modules/caching/caching.module';
 import { JwtModule } from '@nestjs/jwt';
 import { GameModule } from 'src/modules/game';
 import { AuthModule } from 'src/modules/auth';

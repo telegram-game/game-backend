@@ -33,7 +33,11 @@ export class GameMatchService extends BaseGameMatchService {
       providerId,
     );
     if (!fightedUser || fightedUser.id === userId) {
-        throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: '', errorMessage: 'Invalid user'});
+      throw new BusinessException({
+        status: HttpStatus.BAD_REQUEST,
+        errorCode: '',
+        errorMessage: 'Invalid user',
+      });
     }
 
     const rightGameProfile = await this.gameProfileService.getFullFirst(

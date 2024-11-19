@@ -25,9 +25,12 @@ export class GameProfileService {
     return this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
   }
 
-  async getFullFirst(userId: string, options?: {
-    includeBalances?: boolean;
-  }): Promise<FullGameProfile> {
+  async getFullFirst(
+    userId: string,
+    options?: {
+      includeBalances?: boolean;
+    },
+  ): Promise<FullGameProfile> {
     const fullGameProfile = await this.createOrGetFullFirst(userId);
     if (options?.includeBalances) {
       const balances = await this.balanceService.getBalances(userId);
@@ -38,7 +41,7 @@ export class GameProfileService {
         fullGameProfile.balances[token] = userToken?.balance || 0.0;
       });
     }
-    
+
     return fullGameProfile;
   }
 
@@ -64,8 +67,15 @@ export class GameProfileService {
     };
   }
 
-  async changeHouse(userId: string, gameProfileId: string, house: GameHouse): Promise<void> {
-    let gameProfile = await this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId);
+  async changeHouse(
+    userId: string,
+    gameProfileId: string,
+    house: GameHouse,
+  ): Promise<void> {
+    const gameProfile = await this.gameProfileRepository.getByIdOrFirst(
+      userId,
+      gameProfileId,
+    );
     if (!gameProfile) {
       await this.gameProfileRepository.create({
         userId,
@@ -77,7 +87,7 @@ export class GameProfileService {
     if (gameProfile.house === house) {
       return;
     }
-    
+
     await this.gameProfileRepository.update({ id: gameProfile.id, house });
   }
 }

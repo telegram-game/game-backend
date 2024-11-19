@@ -79,7 +79,10 @@ export class BaseMatchHero {
 
     // random base damage for each attach by +-2%
     const isReduce = this.supportService.randomRate(50);
-    const randomIncreaseDamage = this.supportService.calculateWithPercent(damge, 2);
+    const randomIncreaseDamage = this.supportService.calculateWithPercent(
+      damge,
+      2,
+    );
     damge = isReduce
       ? damge - randomIncreaseDamage
       : damge + randomIncreaseDamage;
@@ -95,8 +98,10 @@ export class BaseMatchHero {
     }
 
     // Check the crit rate to calculate the damage in crit rate and skill
-    const isCrit = this.supportService.randomRate(heroData.critRate.percent)
-      || (skill.code === HeroSkill.FATAL_BLOW && this.attackedCount % skill.condition.attackedCount === 0);
+    const isCrit =
+      this.supportService.randomRate(heroData.critRate.percent) ||
+      (skill.code === HeroSkill.FATAL_BLOW &&
+        this.attackedCount % skill.condition.attackedCount === 0);
     if (isCrit) {
       damge += this.supportService.calculateWithPercent(
         damge,
@@ -374,9 +379,17 @@ export class FullGameMatch {
     },
   ): ProgressTurn {
     const steps: ProgressStep[] = [];
-    const { attacker, receiver } = this.getHeroByTurn(options.turn, { leftHero: options.leftHero, rightHero: options.rightHero });
+    const { attacker, receiver } = this.getHeroByTurn(options.turn, {
+      leftHero: options.leftHero,
+      rightHero: options.rightHero,
+    });
     if (result.isMiss) {
-      steps.push({ type: ProgressStepType.MISS, value: 0, fromHeroId: attacker.heroData.id, focusToHeroId: receiver.heroData.id });
+      steps.push({
+        type: ProgressStepType.MISS,
+        value: 0,
+        fromHeroId: attacker.heroData.id,
+        focusToHeroId: receiver.heroData.id,
+      });
     } else {
       if (result.totalDamage) {
         steps.push({

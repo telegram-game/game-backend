@@ -16,5 +16,10 @@ declare global {
       percent: number;
       percentPerTime: number;
     }
+
+    export interface BalanceHistoryMetadata {
+      type: 'claim' | 'deposit' | 'withdraw';
+      additionalData: any;
+    }
   }
 }

@@ -11,12 +11,15 @@ export class HeroSkillRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async getFirstByHeroId(userId: string, heroId: string): Promise<UserGameHeroSkills> {
+  async getFirstByHeroId(
+    userId: string,
+    heroId: string,
+  ): Promise<UserGameHeroSkills> {
     return this.client.userGameHeroSkills.findFirst({
       where: {
         userGameHeroId: heroId,
         userId,
-      }
+      },
     });
   }
 

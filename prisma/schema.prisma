@@ -77,7 +77,8 @@ enum ItemType {
 }
 
 enum Tokens {
-  INGAME
+  INGAME // The token to play the game
+  INGAME_2 // The token to upgrade the level of game profile & buy the items, materials in the game
 }
 
 model User {
@@ -241,15 +242,17 @@ model UserTokenBalances {
 }
 
 model UserTokenBalanceHistories {
-  id          String   @id @default(uuid()) @map("id")
-  userId      String   @map("user_id")
-  token       Tokens   @default(INGAME) @map("token")
-  fromBalance Float    @map("from_balance")
-  toBalance   Float    @map("to_balance")
-  metaData    Json?    @map("meta_data")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  user        User     @relation(fields: [userId], references: [id])
+  id          String @id @default(uuid()) @map("id")
+  userId      String @map("user_id")
+  token       Tokens @default(INGAME) @map("token")
+  fromBalance Float  @map("from_balance")
+  toBalance   Float  @map("to_balance")
+
+  /// [BalanceHistoryMetadata]
+  metaData  Json?    @map("meta_data")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, token, createdAt])
   @@map("user_token_balance_histories")

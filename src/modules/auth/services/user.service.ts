@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { PrismaService } from 'src/modules/prisma';
 import { UserProfileModel } from '../models/auth.dto';
-import { FullUserModel } from '../models/user.dto';
+import { FullUserModel, FullUserRepositoryModel } from '../models/user.dto';
 import { UserProfileRepository } from '../repositories/user-profile.repository';
 
 @Injectable()
@@ -12,6 +12,10 @@ export class UserService {
     private readonly userProfileRepository: UserProfileRepository,
     private prismaService: PrismaService,
   ) {}
+
+  async getById(userId: string): Promise<FullUserRepositoryModel> {
+    return this.userRepository.getFullById(userId);
+  }
 
   async createOrGetFullById(
     userId: string,

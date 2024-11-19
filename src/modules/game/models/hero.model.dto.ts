@@ -50,7 +50,7 @@ export class ChangeSkillRequest {
   gameProfileId: string;
 
   @IsString()
-  heroId: string
+  heroId: string;
 
   @IsEnum(HeroSkill)
   skill: HeroSkill;
