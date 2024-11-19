@@ -11,8 +11,8 @@ export class BalanceController {
   constructor(private userBalanceService: UserBalanceService) {}
 
   @Post('/claim')
-  async changeHouse(@Body() data: ClaimRequest): Promise<void> {
+  async changeHouse(@Body() data: ClaimRequest): Promise<number> {
     const userId = asyncLocalStorage.getStore().userInfo?.userId;
-    await this.userBalanceService.claim(userId, data.token);
+    return await this.userBalanceService.claim(userId, data.token);
   }
 }

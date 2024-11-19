@@ -66,20 +66,23 @@ export class UserBalanceService {
       this.userBalanceHistoryRepisitory.joinTransaction(tx);
 
       let currentBalance = 0;
+      let lastBalance = 0;
       let balance = await this.userBalanceRepository.get(userId, token);
       if (!balance) {
+        lastBalance = calculatedToken;
         balance = await this.userBalanceRepository.create({
           userId,
           token,
-          balance: calculatedToken,
+          balance: lastBalance,
         });
       } else {
         currentBalance = balance.balance;
+        lastBalance = balance.balance + calculatedToken;
         await this.userBalanceRepository.updateOptimistic(
           {
             userId,
             token,
-            balance: currentBalance + calculatedToken,
+            balance: lastBalance,
           },
           balance.updatedAt,
         );
@@ -89,7 +92,7 @@ export class UserBalanceService {
         userId,
         token,
         fromBalance: currentBalance,
-        toBalance: currentBalance + calculatedToken,
+        toBalance: lastBalance,
         metaData: {
           type: 'claim',
           additionalData: {
@@ -117,7 +120,7 @@ export class UserBalanceService {
         });
       }
 
-      return 0;
+      return lastBalance;
     });
   }
 }
