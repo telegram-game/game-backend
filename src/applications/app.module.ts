@@ -43,7 +43,7 @@ import { AuthModule } from 'src/modules/auth';
       inject: [ConfigService],
     }),
     SharedModule,
-    CachingModule,
+    // CachingModule,
     AppInformationModule,
     GameModule,
     AuthModule,
