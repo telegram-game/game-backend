@@ -35,7 +35,7 @@ export class GameProfileController {
   }
 
   @Post('/upgrade-attribute')
-  async UpgradeAttribute(@Body() data: UpgradeAttributeReqeust): Promise<void> {
+  async upgradeAttribute(@Body() data: UpgradeAttributeReqeust): Promise<void> {
     const userId = asyncLocalStorage.getStore().userInfo?.userId;
     await this.gameProfileService.upgradeAttribute(userId, data.gameProfileId, data.attribute);
   }

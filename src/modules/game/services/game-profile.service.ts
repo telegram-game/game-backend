@@ -71,6 +71,7 @@ export class GameProfileService {
       );
       attributes[attribute] = {
         level: userGameProfileAttribute?.value || 1,
+        cost: this.calculateUpgradeCost(attribute, userGameProfileAttribute?.value || 1),
         description: 'This is a description',
       };
     })
@@ -139,7 +140,7 @@ export class GameProfileService {
       lastAttributeLevel = attributeLevel + 1;
     }
     
-    const cost = upgradeInformation.baseCost * Math.pow(upgradeInformation.multiplier, attributeLevel - 1);
+    const cost = this.calculateUpgradeCost(attribute, lastAttributeLevel);
     const balance = await this.balanceService.get(userId, Tokens.INGAME);
     if (!balance || balance.balance < cost) {
       throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance'});
@@ -169,5 +170,16 @@ export class GameProfileService {
         value: lastAttributeLevel,
       });
     }
+  }
+
+  private calculateUpgradeCost(attribute: UserGameProfileAttribute, level: number): number {
+    const upgradeInformation = configurationData.system.upgradeInformation[attribute];
+    if (!upgradeInformation) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found'});
+    }
+
+    const maxLevel = 16;
+    const current = Math.min(level - 1, maxLevel);
+    return upgradeInformation.baseCost * Math.pow(upgradeInformation.multiplier, current);
   }
 }
