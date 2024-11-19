@@ -17,6 +17,7 @@ import { HeroItemController } from './controllers/hero-item.controller';
 import { HeroItemService } from './services/hero-item.service';
 import { GameMatchController } from './controllers/game-match.controller';
 import { GameMatchService } from './services/game-match.service';
+import { GameProfileAttributeRepository } from './repositories/game-profile-attribute.repository';
 
 @Module({
   imports: [PrismaModule],
@@ -35,6 +36,7 @@ import { GameMatchService } from './services/game-match.service';
     InventoryRepository,
     InventoryAttributeRepository,
     GameProfileRepository,
+    GameProfileAttributeRepository,
     HeroService,
     GameProfileService,
     GameMatchService,

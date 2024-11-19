@@ -40,5 +40,15 @@
             "gapTime": 600,
             "description": "1 token per 1 hour, the period of time between 2 tokens is 10 minutes"
         }
+    },
+    "upgradeInformation": {
+        "POCKET": {
+            "baseCost": 20, 
+            "multiplier": 2
+        },
+        "SALARY": {
+            "baseCost": 20, 
+            "multiplier": 2
+        }
     }
 }

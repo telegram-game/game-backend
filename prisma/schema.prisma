@@ -24,6 +24,11 @@ enum UserProvider {
   FACEBOOK
 }
 
+enum UserGameProfileAttribute {
+  POCKET
+  SALARY
+}
+
 enum GameHouse {
   DOGS
   HAMSTERS
@@ -97,9 +102,10 @@ model User {
   userGameInventories         UserGameInventories[]
   userGameHeroItems           UserGameHeroItems[]
   userGameInventoryAttributes UserGameInventoryAttributes[]
-  UserTokenBalances           UserTokenBalances[]
-  UserTokenBalanceHistories   UserTokenBalanceHistories[]
-  UserTokenClaimInfomations   UserTokenClaimInfomations[]
+  userTokenBalances           UserTokenBalances[]
+  userTokenBalanceHistories   UserTokenBalanceHistories[]
+  userTokenClaimInfomations   UserTokenClaimInfomations[]
+  userAttributes              UserGameProfileAttributes[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -120,17 +126,33 @@ model UserProfiles {
 }
 
 model UserGameProfiles {
-  id                  String                @id @default(cuid()) @map("id")
-  userId              String                @unique @map("user_id")
-  house               GameHouse             @map("house")
-  class               String?               @map("class")
-  createdAt           DateTime              @default(now()) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
-  user                User                  @relation(fields: [userId], references: [id])
-  userGameHero        UserGameHeros[]
-  UserGameInventories UserGameInventories[]
+  id                        String                     @id @default(cuid()) @map("id")
+  userId                    String                     @unique @map("user_id")
+  house                     GameHouse                  @map("house")
+  class                     String?                    @map("class")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  user                      User                       @relation(fields: [userId], references: [id])
+  userGameHero              UserGameHeros[]
+  userGameInventories       UserGameInventories[]
+  userGameProfileAttributes UserGameProfileAttributes[]
 
   @@map("user_game_profiles")
+}
+
+model UserGameProfileAttributes {
+  id                String                   @id @default(cuid()) @map("id")
+  userId            String                   @map("user_id")
+  userGameProfileId String                   @map("user_game_profile_id")
+  attribute         UserGameProfileAttribute @map("attribute")
+  value             Int                      @map("value")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+  user              User                     @relation(fields: [userId], references: [id])
+  userGameProfile   UserGameProfiles         @relation(fields: [userGameProfileId], references: [id])
+
+  @@unique([userGameProfileId, attribute])
+  @@map("user_game_attributes")
 }
 
 model UserGameHeros {

@@ -6,7 +6,8 @@ import {
 import { BusinessException } from 'src/exceptions';
 import { FullInventoryRepositoryModel } from '../models/inventory.model.dto';
 import { configurationData } from '../../../data/index';
-import { HeroAttribute, HeroSkill } from '@prisma/client';
+import { HeroAttribute, HeroSkill, UserGameProfileAttribute } from '@prisma/client';
+import { FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 
 const houseData = configurationData.houses;
 const systemData = configurationData.system;
@@ -34,10 +35,19 @@ export class BaseHeroService {
   protected readonly reflectSkills: HeroSkill[] = [HeroSkill.REFLECT];
   protected readonly hpRegenSkills: HeroSkill[] = [];
   protected readonly defaultCritDamegeLevel = 1;
+  protected readonly maximumCritRate = 90;
+  protected readonly maximumEvasion = 90;
+
+  private increaseByPercent(value: number, percent: number, max?: number): number {
+    const increase = Math.floor(value * (percent / 100));
+    const newValue = value + increase;
+    return max ? Math.min(newValue, max) : newValue;
+  }
 
   protected async mapToFullHero(
     hero: FullHeroRepositoryModel,
     inventories: FullInventoryRepositoryModel[],
+    userGameProfile: FullGameProfileRepositoryModel,
   ): Promise<FullHero> {
     const house = houseData[hero.userGameProfile.house];
     if (!house) {
@@ -48,13 +58,19 @@ export class BaseHeroService {
       });
     }
 
+    const pocketAttribute = userGameProfile.userGameProfileAttributes.find(att => att.attribute === UserGameProfileAttribute.POCKET);
+    const salaryAttribute = userGameProfile.userGameProfileAttributes.find(att => att.attribute === UserGameProfileAttribute.SALARY);
+    const pocket = pocketAttribute ? pocketAttribute.value : 1;
+    const salary = salaryAttribute ? salaryAttribute.value : 1;
+    const increasePercent = pocket * 10 + salary * 10; // total percents
+
     const baseHouseAttack =
-      systemData.baseAttackByLevel[house.attributes.attackLevel];
-    const baseHouseHp = systemData.baseHpByLevel[house.attributes.hpLevel];
+      this.increaseByPercent(systemData.baseAttackByLevel[house.attributes.attackLevel], increasePercent);
+    const baseHouseHp = this.increaseByPercent(systemData.baseHpByLevel[house.attributes.hpLevel], increasePercent);
     const baseHouseEvasion =
-      systemData.baseEvasionByLevel[house.attributes.luckLevel];
+      this.increaseByPercent(systemData.baseEvasionByLevel[house.attributes.luckLevel], increasePercent, this.maximumEvasion);
     const baseHouseCritRate =
-      systemData.baseCritRateByLevel[house.attributes.luckLevel];
+      this.increaseByPercent(systemData.baseCritRateByLevel[house.attributes.luckLevel], increasePercent, this.maximumCritRate);
     const baseHouseCritDamage =
       systemData.baseCritDamageByLevel[this.defaultCritDamegeLevel];
 
@@ -68,12 +84,21 @@ export class BaseHeroService {
       inventories.find((i) => i.id === itemInventoryId),
     );
 
+    const evasion = this.buildEvasion(baseHouseEvasion, inventoryItems);
+    if (evasion.percent > this.maximumEvasion) {
+      evasion.percent = this.maximumEvasion;
+    }
+    const critRate = this.buildCritRate(baseHouseCritRate, inventoryItems);
+    if (critRate.percent > this.maximumCritRate) {
+      critRate.percent = this.maximumCritRate;
+    }
+
     return {
       id: hero.id,
       attack: this.buildHeroAttack(baseHouseAttack, inventoryItems),
       hp: this.buildHeroHP(baseHouseHp, inventoryItems),
-      evasion: this.buildEvasion(baseHouseEvasion, inventoryItems),
-      critRate: this.buildCritRate(baseHouseCritRate, inventoryItems),
+      evasion: evasion,
+      critRate: critRate,
       critDamage: this.buildCritDamge(baseHouseCritDamage, inventoryItems),
       lifeSteal: this.buildLifeSteal(skillData, inventoryItems),
       reflect: this.buildReflect(skillData, inventoryItems),

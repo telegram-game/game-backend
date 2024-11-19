@@ -56,9 +56,7 @@ export class InventoryService extends BaseInventoryService {
     const itemCodeList = chest.itemTypeCodeRates[itemType] ?? [];
     const itemCode = this.supportService.randomWithRate(itemCodeList);
     const star = parseInt(this.supportService.randomWithRate(chest.starRates));
-    console.log(`Hoang ${itemType}, ${itemCode}, ${star}`);
     const attributes = this.itemData.itemAttributes[itemType][star];
-    console.log(`Hoang ${itemType}, ${itemCode}, ${star}`, attributes);
     const fixedAttributes =
       this.supportService.randomWithList<ItemAttributeData>(
         attributes.fixedItemAttributes,
@@ -71,12 +69,6 @@ export class InventoryService extends BaseInventoryService {
         chest.flexibleItemAttributesCount,
         true,
       );
-    console.log(
-      `Hoang ${itemType}, ${itemCode}, ${star}`,
-      attributes,
-      fixedAttributes,
-      flexibleItemAttributes,
-    );
     await this.prismaService.$transaction(async (tx: PrismaService) => {
       this.inventoryRepository.joinTransaction(tx);
       this.inventoryAttributeRepository.joinTransaction(tx);

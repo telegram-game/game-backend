@@ -13,15 +13,18 @@ export class UserService {
     private prismaService: PrismaService,
   ) {}
 
-  async getById(userId: string): Promise<FullUserRepositoryModel> {
-    return this.userRepository.getFullById(userId);
+  async getById(userId: string, options?: {
+  }): Promise<FullUserRepositoryModel> {
+    return this.userRepository.getFullById(userId, options);
   }
 
   async createOrGetFullById(
     userId: string,
     profile: UserProfileModel,
   ): Promise<FullUserModel> {
-    const user = await this.userRepository.getFullById(userId);
+    const user = await this.userRepository.getFullById(userId, {
+      userProfile: true,
+    });
     if (user) {
       return {
         ...user,

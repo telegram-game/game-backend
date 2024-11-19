@@ -4,6 +4,7 @@ import { GameProfileService } from '../services/game-profile.service';
 import {
   ChangeHouseReqeust,
   FullGameProfile,
+  UpgradeAttributeReqeust,
 } from '../models/game-profile.dto';
 
 @Controller({
@@ -18,6 +19,7 @@ export class GameProfileController {
     const userId = asyncLocalStorage.getStore().userInfo?.userId;
     const data = await this.gameProfileService.getFullFirst(userId, {
       includeBalances: true,
+      includeAttributes: true,
     });
     return data;
   }
@@ -30,5 +32,11 @@ export class GameProfileController {
       data.gameProfileId,
       data.house,
     );
+  }
+
+  @Post('/upgrade-attribute')
+  async UpgradeAttribute(@Body() data: UpgradeAttributeReqeust): Promise<void> {
+    const userId = asyncLocalStorage.getStore().userInfo?.userId;
+    await this.gameProfileService.upgradeAttribute(userId, data.gameProfileId, data.attribute);
   }
 }

@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { GameProfileRepository } from '../repositories/game-profile.repository';
-import { FullGameProfile } from '../models/game-profile.dto';
+import { FullGameProfile, FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
-import { GameHouse, Tokens, UserGameProfiles } from '@prisma/client';
+import { GameHouse, Tokens, UserGameProfileAttribute, UserGameProfileAttributes, UserGameProfiles } from '@prisma/client';
 import { configurationData } from '../../../data';
 import { BalanceService } from 'src/modules/shared/services/balance.service';
+import { AuthService } from 'src/modules/shared/services/auth.service';
+import { BusinessException } from 'src/exceptions';
+import { GameProfileAttributeRepository } from '../repositories/game-profile-attribute.repository';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -14,8 +17,10 @@ export class GameProfileService {
   private readonly defaultHouse = GameHouse.HAMSTERS;
   constructor(
     private readonly gameProfileRepository: GameProfileRepository,
+    private readonly gameProfileAttributeRepository: GameProfileAttributeRepository,
     private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
+    private readonly authService: AuthService,
   ) {}
 
   async getByIdOrFirst(
@@ -29,6 +34,7 @@ export class GameProfileService {
     userId: string,
     options?: {
       includeBalances?: boolean;
+      includeAttributes?: boolean;
     },
   ): Promise<FullGameProfile> {
     const fullGameProfile = await this.createOrGetFullFirst(userId);
@@ -46,13 +52,28 @@ export class GameProfileService {
   }
 
   async createOrGetFullFirst(userId: string): Promise<FullGameProfile> {
-    let gameProfile = await this.gameProfileRepository.getFirst(userId);
+    let gameProfile: FullGameProfileRepositoryModel = await this.gameProfileRepository.getFirst(userId, {
+      includeAttributes: true,
+    });
+
     if (!gameProfile) {
       gameProfile = await this.gameProfileRepository.create({
         userId,
         house: this.defaultHouse,
       });
     }
+
+    const attributes = {}
+    Object.keys(UserGameProfileAttribute).forEach((key) => {
+      const attribute = UserGameProfileAttribute[key as keyof typeof UserGameProfileAttribute];
+      const userGameProfileAttribute = gameProfile.userGameProfileAttributes.find(
+        (attr) => attr.attribute === attribute,
+      );
+      attributes[attribute] = {
+        level: userGameProfileAttribute?.value || 1,
+        description: 'This is a description',
+      };
+    })
 
     const fullHero = await this.heroService.createOrGetFullFirst(
       userId,
@@ -64,6 +85,7 @@ export class GameProfileService {
       houseData: houseValue,
       skillData: skills[fullHero.skill],
       hero: fullHero,
+      attributes: attributes,
     };
   }
 
@@ -89,5 +111,63 @@ export class GameProfileService {
     }
 
     await this.gameProfileRepository.update({ id: gameProfile.id, house });
+  }
+
+  async upgradeAttribute(
+    userId: string,
+    gameProfileId: string,
+    attribute: UserGameProfileAttribute,
+  ): Promise<void> {
+    const upgradeInformation = configurationData.system.upgradeInformation[attribute];
+    if (!upgradeInformation) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found'});
+    }
+
+    let attributeLevel = 1;
+    let lastAttributeLevel = 2;
+    const gameProfile = await this.gameProfileRepository.getByIdOrFirst(userId, gameProfileId, {
+      includeAttributes: true,
+    });
+
+    if (!gameProfile) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'GAME_PROFILE_NOT_FOUND', errorMessage: 'Game profile not found'});
+    }
+
+    const attr = gameProfile.userGameProfileAttributes.find(att => att.attribute === attribute);
+    if (attr) {
+      attributeLevel = attr.value;
+      lastAttributeLevel = attributeLevel + 1;
+    }
+    
+    const cost = upgradeInformation.baseCost * Math.pow(upgradeInformation.multiplier, attributeLevel - 1);
+    const balance = await this.balanceService.get(userId, Tokens.INGAME);
+    if (!balance || balance.balance < cost) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance'});
+    }
+
+    // Update balance and balance history
+    // Add event to upgrade attribute. But now just call to update in database
+    await this.balanceService.decrease(userId, Tokens.INGAME, cost, {
+      type: 'upgrade-attribute',
+      additionalData: {
+        attribute,
+        cost,
+        fromLevel: attributeLevel,
+        toLevel: lastAttributeLevel,
+      }
+    });
+    if (attr) {
+      await this.gameProfileAttributeRepository.updateOptimstic({
+        id: attr.id,
+        value: lastAttributeLevel,
+      }, attr.updatedAt);
+    } else {
+      await this.gameProfileAttributeRepository.create({
+        userId,
+        userGameProfileId: gameProfileId,
+        attribute,
+        value: lastAttributeLevel,
+      });
+    }
   }
 }

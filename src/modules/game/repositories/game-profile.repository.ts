@@ -2,6 +2,7 @@ import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
 import { UserGameProfiles } from '@prisma/client';
+import { FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -14,20 +15,48 @@ export class GameProfileRepository extends BaseRepository {
   async getByIdOrFirst(
     userId: string,
     gameProfileId?: string,
-  ): Promise<UserGameProfiles> {
+    options?: {
+      includeAttributes?: boolean;
+    }
+  ): Promise<FullGameProfileRepositoryModel> {
     return this.client.userGameProfiles.findFirst({
       where: {
         userId,
         id: gameProfileId,
       },
+      include: {
+        userGameProfileAttributes: options?.includeAttributes,
+      }
+    }).then((gameProfile) => {
+      if (!gameProfile) {
+        return null;
+      }
+      return {
+        ...gameProfile,
+        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
+      } as FullGameProfileRepositoryModel;
     });
   }
 
-  async getFirst(userId: string): Promise<UserGameProfiles> {
+  async getFirst(userId: string,
+    options?: {
+      includeAttributes?: boolean;
+    }): Promise<FullGameProfileRepositoryModel> {
     return this.client.userGameProfiles.findFirst({
       where: {
         userId,
       },
+      include: {
+        userGameProfileAttributes: options?.includeAttributes,
+      }
+    }).then((gameProfile) => {
+      if (!gameProfile) {
+        return null;
+      }
+      return {
+        ...gameProfile,
+        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
+      } as FullGameProfileRepositoryModel;
     });
   }
 

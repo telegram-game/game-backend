@@ -18,8 +18,51 @@ export class UserBalanceService {
     private readonly prismaService: PrismaService,
   ) {}
 
+  async get(userId: string, token: Tokens): Promise<UserTokenBalances> {
+    return await this.userBalanceRepository.get(userId, token);
+  }
+
   async gets(userId: string): Promise<UserTokenBalances[]> {
     return await this.userBalanceRepository.gets(userId);
+  }
+
+  async decreaseBalance(userId: string, token: Tokens, amount: number, metaData: any): Promise<number> {
+    return await this.prismaService.$transaction(async (tx: PrismaService) => {
+      this.userBalanceRepository.joinTransaction(tx);
+      this.userTokenClaimRepository.joinTransaction(tx);
+      this.userBalanceHistoryRepisitory.joinTransaction(tx);
+
+      let balance = await this.userBalanceRepository.get(userId, token);
+
+      const currentBalance = balance.balance;
+      const lastBalance = currentBalance - amount;
+      if (lastBalance < 0) {
+        throw new BusinessException({
+          status: HttpStatus.BAD_REQUEST,
+          errorCode: 'INSUFFICIENT_BALANCE',
+          errorMessage: 'Insufficient balance',
+        });
+      }
+      
+      await this.userBalanceRepository.updateOptimistic(
+        {
+          userId,
+          token,
+          balance: lastBalance,
+        },
+        balance.updatedAt,
+      );
+
+      await this.userBalanceHistoryRepisitory.create({
+        userId,
+        token,
+        fromBalance: currentBalance,
+        toBalance: lastBalance,
+        metaData,
+      });
+
+      return lastBalance;
+    });
   }
 
   async claim(userId: string, token: Tokens): Promise<number> {

@@ -7,6 +7,7 @@ import { PrismaService } from 'src/modules/prisma';
 import { InventoryRepository } from '../repositories/inventory.repository';
 import { HeroSkillRepository } from '../repositories/hero-skill.repository';
 import { BusinessException } from 'src/exceptions';
+import { FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 
 @Injectable()
 export class HeroService extends BaseHeroService {
@@ -22,7 +23,7 @@ export class HeroService extends BaseHeroService {
 
   async getFullFirst(
     userId: string,
-    userGameProfile: UserGameProfiles,
+    userGameProfile: FullGameProfileRepositoryModel,
   ): Promise<FullHero> {
     const hero = await this.heroRepository.getFullFirst(
       userId,
@@ -38,12 +39,12 @@ export class HeroService extends BaseHeroService {
       userId,
       userGameProfile.id,
     );
-    return this.mapToFullHero(hero, inventories);
+    return this.mapToFullHero(hero, inventories, userGameProfile);
   }
 
   async createOrGetFullFirst(
     userId: string,
-    userGameProfile: UserGameProfiles,
+    userGameProfile: FullGameProfileRepositoryModel,
   ): Promise<FullHero> {
     const fullHero = await this.getFullFirst(userId, userGameProfile);
     if (fullHero) {

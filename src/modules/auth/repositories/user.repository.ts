@@ -12,13 +12,15 @@ export class UserRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async getFullById(userId: string): Promise<FullUserRepositoryModel> {
+  async getFullById(userId: string, options?: {
+    userProfile?: true,
+  }): Promise<FullUserRepositoryModel> {
     return this.client.user.findFirst({
       where: {
         id: userId,
       },
       include: {
-        userProfile: true,
+        userProfile: options?.userProfile,
       },
     });
   }

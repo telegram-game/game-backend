@@ -1,4 +1,4 @@
-import { Tokens } from '@prisma/client';
+import { Tokens, UserGameProfileAttribute } from '@prisma/client';
 import { Star } from '../common/common.model';
 import systemData from './system.json';
 
@@ -25,6 +25,12 @@ export class SystemConfigData {
       description: string;
     };
   };
+  upgradeInformation: {
+    [key in UserGameProfileAttribute]?: {
+      baseCost: number;
+      multiplier: number;
+    }
+  }
 }
 
 export const system = systemData as SystemConfigData;
