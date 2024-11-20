@@ -4,10 +4,10 @@ import { BaseGameMatchService } from './game-match.base-service';
 import { SupportService } from 'src/modules/shared/services/support.service';
 import { FullGameMatch, GameMatchResult } from '../models/game-match.dto';
 import { GameProfileService } from './game-profile.service';
-import { Providers } from 'src/modules/auth/models/auth.dto';
 import { AuthService } from 'src/modules/shared/services/auth.service';
 import { BusinessException } from 'src/exceptions';
 import { FullGameProfile } from '../models/game-profile.dto';
+import { UserProvider } from '@prisma/client';
 
 @Injectable()
 export class GameMatchService extends BaseGameMatchService {
@@ -47,7 +47,7 @@ export class GameMatchService extends BaseGameMatchService {
 
   async fightingWithFriend(
     userId: string,
-    provider: Providers,
+    provider: UserProvider,
     providerId: string,
   ): Promise<GameMatchResult> {
     const fightedUser = await this.authService.getUserByProvider(

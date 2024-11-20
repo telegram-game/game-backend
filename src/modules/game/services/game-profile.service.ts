@@ -21,7 +21,7 @@ export class GameProfileService {
     private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
     private readonly prismaService: PrismaService,
-  ) {}
+  ) { }
 
   async getByIdOrFirst(
     userId: string,
@@ -63,7 +63,7 @@ export class GameProfileService {
     );
 
     if (!fullHero) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'HERO_NOT_FOUND', errorMessage: 'Hero not found'});
+      throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'HERO_NOT_FOUND', errorMessage: 'Hero not found' });
     }
 
     const houseValue = houseData[gameProfile.house];
@@ -146,10 +146,13 @@ export class GameProfileService {
     userId: string,
     gameProfileId: string,
     attribute: UserGameProfileAttribute,
+    options?: {
+      ignoreCost?: boolean;
+    }
   ): Promise<void> {
     const upgradeInformation = configurationData.system.upgradeInformation[attribute];
     if (!upgradeInformation) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found'});
+      throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found' });
     }
 
     let attributeLevel = 1;
@@ -159,7 +162,7 @@ export class GameProfileService {
     });
 
     if (!gameProfile) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'GAME_PROFILE_NOT_FOUND', errorMessage: 'Game profile not found'});
+      throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'GAME_PROFILE_NOT_FOUND', errorMessage: 'Game profile not found' });
     }
 
     const attr = gameProfile.userGameProfileAttributes.find(att => att.attribute === attribute);
@@ -167,24 +170,26 @@ export class GameProfileService {
       attributeLevel = attr.value;
       lastAttributeLevel = attributeLevel + 1;
     }
-    
-    const cost = this.calculateUpgradeCost(attribute, attributeLevel);
-    const balance = await this.balanceService.get(userId, Tokens.INGAME);
-    if (!balance || balance.balance < cost) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance'});
-    }
 
-    // Update balance and balance history
-    // Add event to upgrade attribute. But now just call to update in database
-    await this.balanceService.decrease(userId, Tokens.INGAME, cost, {
-      type: 'upgrade-attribute',
-      additionalData: {
-        attribute,
-        cost,
-        fromLevel: attributeLevel,
-        toLevel: lastAttributeLevel,
+    if (options?.ignoreCost) {
+      const cost = this.calculateUpgradeCost(attribute, attributeLevel);
+      const balance = await this.balanceService.get(userId, Tokens.INGAME);
+      if (!balance || balance.balance < cost) {
+        throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance' });
       }
-    });
+
+      // Update balance and balance history
+      // Add event to upgrade attribute. But now just call to update in database
+      await this.balanceService.decrease(userId, Tokens.INGAME, cost, {
+        type: 'upgrade-attribute',
+        additionalData: {
+          attribute,
+          cost,
+          fromLevel: attributeLevel,
+          toLevel: lastAttributeLevel,
+        }
+      });
+    }
 
     const repositories = [this.gameProfileAttributeRepository, this.gameProfileRepository];
     await this.prismaService.transaction(async () => {
@@ -212,7 +217,7 @@ export class GameProfileService {
   private calculateUpgradeCost(attribute: UserGameProfileAttribute, level: number): number {
     const upgradeInformation = configurationData.system.upgradeInformation[attribute];
     if (!upgradeInformation) {
-      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found'});
+      throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found' });
     }
 
     const maxLevel = 100;

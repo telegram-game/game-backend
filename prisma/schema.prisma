@@ -18,6 +18,7 @@ datasource db {
 }
 
 enum UserProvider {
+  SEED
   LOCAL
   TELEGRAM
   GOOGLE

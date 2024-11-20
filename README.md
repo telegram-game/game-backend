@@ -92,6 +92,12 @@ $ ./migrate/run.sh
 ```
 Note: Please setup the `DATABASE_URL` point to the database engine we want to migrate
 
+# How to run the seed data
+```
+$ set -o allexport && source .env
+$ ./migration.sh <migration_name>
+```
+
 # How to run the service
 * Copy the `.env.example` to `.env` and config the env environment
 * Install the dependencies

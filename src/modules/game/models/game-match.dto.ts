@@ -1,9 +1,9 @@
 import { SupportService } from 'src/modules/shared/services/support.service';
 import { FullHero } from './hero.model.dto';
-import { HeroAttribute, HeroSkill } from '@prisma/client';
+import { HeroAttribute, HeroSkill, UserProvider } from '@prisma/client';
 import { configurationData } from '../../../data';
 import { IsEnum, IsString } from 'class-validator';
-import { Providers } from 'src/modules/auth/models/auth.dto';
+import { AllowedProviders } from 'src/modules/auth/models/auth.dto';
 
 const skills = configurationData.skills;
 
@@ -437,8 +437,8 @@ export class FightWithFriendRequest {
   @IsString()
   gameProfileId: string;
 
-  @IsEnum(Providers)
-  provider: Providers;
+  @IsEnum(AllowedProviders)
+  provider: UserProvider;
 
   @IsString()
   providerId: string;

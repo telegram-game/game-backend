@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "start:seed": "NODE_PATH=./ ts-node prisma/seed.ts",
     "start:game_api": "APP_NAME=GAME_API nest start",
     "start:dev": "nest start --watch",
     "start:dev:game_api": "APP_NAME=GAME_API nest start --watch",
@@ -69,7 +70,8 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "random-name": "^0.1.2"
   },
   "jest": {
     "moduleFileExtensions": [

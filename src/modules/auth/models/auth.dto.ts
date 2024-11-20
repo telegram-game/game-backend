@@ -1,6 +1,7 @@
-import { IsEnum, IsString } from 'class-validator';
+import { UserProvider } from '@prisma/client';
+import { Allow, IsEnum, IsString } from 'class-validator';
 
-export enum Providers {
+export enum AllowedProviders {
   TELEGRAM = 'TELEGRAM',
 }
 
@@ -15,8 +16,8 @@ export class LoginResponse {
 }
 
 export class LoginProviderRequest {
-  @IsEnum(Providers)
-  provider: Providers;
+  @IsEnum(AllowedProviders)
+  provider: UserProvider;
 
   @IsString()
   code: string;
@@ -28,7 +29,7 @@ export class RefreshTokenRequest {
 }
 
 export class UserProfileModel {
-  provider: Providers;
+  provider: UserProvider;
   providerId: string;
   firstName?: string;
   lastName?: string;
