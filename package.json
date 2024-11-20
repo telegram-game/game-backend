@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:seed": "NODE_PATH=./ ts-node prisma/seed.ts",
+    "start:verify": "NODE_PATH=./ ts-node prisma/verify.ts",
     "start:game_api": "APP_NAME=GAME_API nest start",
     "start:dev": "nest start --watch",
     "start:dev:game_api": "APP_NAME=GAME_API nest start --watch",

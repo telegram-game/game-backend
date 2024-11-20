@@ -5,11 +5,12 @@ import { AuthService } from './services/auth.service';
 import { BalanceModule } from '../balance';
 import { BalanceService } from './services/balance.service';
 import { AuthModule } from '../auth';
+import { TelegramService } from './services/telegram.service';
 
 @Global()
 @Module({
   imports: [HttpModule, BalanceModule, AuthModule],
-  providers: [SupportService, AuthService, BalanceService],
-  exports: [SupportService, AuthService, BalanceService],
+  providers: [SupportService, AuthService, BalanceService, TelegramService],
+  exports: [SupportService, AuthService, BalanceService, TelegramService],
 })
 export class SharedModule {}
