@@ -23,16 +23,29 @@ export class HeroAttributeValue {
   }
 }
 
+export type HeroAttributeType = {
+  attack: HeroAttributeValue;
+  hp: HeroAttributeValue;
+  critRate: HeroAttributeValue;
+  critDamage: HeroAttributeValue;
+  evasion: HeroAttributeValue;
+  lifeSteal: HeroAttributeValue;
+  reflect: HeroAttributeValue;
+  hpRegen: HeroAttributeValue;
+}
+
+export type FullHeroAttributeValue = {
+  main: HeroAttributeValue;
+  base: HeroAttributeValue;
+  additional: HeroAttributeValue;
+}
+
 export type FullHero = UserGameHeros &
-  UserGameProfiles & {
-    attack: HeroAttributeValue;
-    hp: HeroAttributeValue;
-    critRate: HeroAttributeValue;
-    critDamage: HeroAttributeValue;
-    evasion: HeroAttributeValue;
-    lifeSteal: HeroAttributeValue;
-    reflect: HeroAttributeValue;
-    hpRegen: HeroAttributeValue;
+  UserGameProfiles & HeroAttributeType & {
+    metaData?: {
+      base: HeroAttributeType
+      additional: HeroAttributeType
+    }
 
     skill: HeroSkill;
     items: FullInventoryRepositoryModel[];

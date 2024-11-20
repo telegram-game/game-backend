@@ -1,5 +1,6 @@
 import {
   FullHero,
+  FullHeroAttributeValue,
   FullHeroRepositoryModel,
   HeroAttributeValue,
 } from '../models/hero.model.dto';
@@ -85,25 +86,48 @@ export class BaseHeroService {
       inventories.find((i) => i.id === itemInventoryId),
     );
 
+    const attack = this.buildHeroAttack(baseHouseAttack, inventoryItems)
+    const hp = this.buildHeroHP(baseHouseHp, inventoryItems)
     const evasion = this.buildEvasion(baseHouseEvasion, inventoryItems);
-    if (evasion.percent > this.maximumEvasion) {
-      evasion.percent = this.maximumEvasion;
-    }
     const critRate = this.buildCritRate(baseHouseCritRate, inventoryItems);
-    if (critRate.percent > this.maximumCritRate) {
-      critRate.percent = this.maximumCritRate;
-    }
+    const critDamage = this.buildCritDamge(baseHouseCritDamage, inventoryItems)
+    const lifeSteal = this.buildLifeSteal(skillData, inventoryItems);
+    const reflect = this.buildReflect(skillData, inventoryItems);
+    const hpRegen = this.buildHPRegen(skillData, inventoryItems);
 
     return {
       id: hero.id,
-      attack: this.buildHeroAttack(baseHouseAttack, inventoryItems),
-      hp: this.buildHeroHP(baseHouseHp, inventoryItems),
-      evasion: evasion,
-      critRate: critRate,
-      critDamage: this.buildCritDamge(baseHouseCritDamage, inventoryItems),
-      lifeSteal: this.buildLifeSteal(skillData, inventoryItems),
-      reflect: this.buildReflect(skillData, inventoryItems),
-      hpRegen: this.buildHPRegen(skillData, inventoryItems),
+      attack: attack.main,
+      hp: hp.main,
+      evasion: evasion.main,
+      critRate: critRate.main,
+      critDamage: critDamage.main,
+      lifeSteal: lifeSteal.main,
+      reflect: reflect.main,
+      hpRegen: hpRegen.main,
+
+      metaData: {
+        base: {
+          attack: attack.base,
+          hp: hp.base,
+          evasion: evasion.base,
+          critRate: critRate.base,
+          critDamage: critDamage.base,
+          lifeSteal: lifeSteal.base,
+          reflect: reflect.base,
+          hpRegen: hpRegen.base,
+        },
+        additional: {
+          attack: attack.additional,
+          hp: hp.additional,
+          evasion: evasion.additional,
+          critRate: critRate.additional,
+          critDamage: critDamage.additional,
+          lifeSteal: lifeSteal.additional,
+          reflect: reflect.additional,
+          hpRegen: hpRegen.additional,
+        },
+      },
 
       skill: skill,
       items: inventoryItems,
@@ -113,159 +137,295 @@ export class BaseHeroService {
   protected buildHeroAttack(
     baseHouseAttack: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue({
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue({
+      point: baseHouseAttack,
+    });
+    const main = new HeroAttributeValue({
       point: baseHouseAttack,
     });
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.attackAttributes.includes(attribute.attribute)) {
+          // Main
+          main.point += attribute.value.point || 0;
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional,
+    }
   }
 
   protected buildHeroHP(
     baseHouseHp: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue({
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue({
       point: baseHouseHp,
     });
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const main = new HeroAttributeValue({
+      point: baseHouseHp,
+    });
+
+    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.hpAttributes.includes(attribute.attribute)) {
+          // Main 
+          main.point += attribute.value.point || 0;
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional,
+    }
   }
 
   protected buildEvasion(
     baseHouseEvasion: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue({
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue({
       percent: baseHouseEvasion,
     });
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const main = new HeroAttributeValue({
+      percent: baseHouseEvasion,
+    });
+
+    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.evasionAttributes.includes(attribute.attribute)) {
+          // Main
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    if (base.percent > this.maximumCritRate) {
+      base.percent = this.maximumCritRate;
+    }
+    if (main.percent > this.maximumCritRate) {
+      main.percent = this.maximumCritRate;
+    }
+    if (additional.percent > main.percent - base.percent) {
+      additional.percent = main.percent - base.percent;
+    }
+
+    return {
+      main,
+      base,
+      additional,
+    }
   }
 
   protected buildCritRate(
     baseHouseCritRate: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue({
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue({
       percent: baseHouseCritRate,
     });
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const main = new HeroAttributeValue({
+      percent: baseHouseCritRate,
+    });
+
+    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.critRateAttributes.includes(attribute.attribute)) {
+          // Main
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    if (base.percent > this.maximumCritRate) {
+      base.percent = this.maximumCritRate;
+    }
+    if (main.percent > this.maximumCritRate) {
+      main.percent = this.maximumCritRate;
+    }
+    if (additional.percent > main.percent - base.percent) {
+      additional.percent = main.percent - base.percent;
+    }
+
+    return {
+      main,
+      base,
+      additional,
+    }
   }
 
   protected buildCritDamge(
     baseHouseCritDamage: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue({
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue({
       percent: baseHouseCritDamage,
     });
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const main = new HeroAttributeValue({
+      percent: baseHouseCritDamage,
+    });
+
+    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.critRateAttributes.includes(attribute.attribute)) {
+          // Main
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional: addtional,
+    }
   }
 
   protected buildLifeSteal(
     skillData: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue();
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue();
 
+    const main = new HeroAttributeValue();
+
+    // Skill is the base
     if (this.lifeStealSkills.includes(skillData.code)) {
-      attributeValue.percent =
+      base.point = skillData.attributes[HeroAttribute.LIFE_STEAL].point;
+      base.percent =
+        skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
+      main.point = skillData.attributes[HeroAttribute.LIFE_STEAL].point;
+      main.percent =
         skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
     }
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.lifeStealAttributes.includes(attribute.attribute)) {
+          // Main
+          main.point += attribute.value.point || 0;
+
+          // Additional
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional: addtional,
+    }
   }
 
   protected buildReflect(
     skillData: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue();
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue();
+    const main = new HeroAttributeValue();
 
     if (this.reflectSkills.includes(skillData.code)) {
-      attributeValue.point = skillData.attributes[HeroAttribute.REFLECT].point;
-      attributeValue.percent =
+      base.point = skillData.attributes[HeroAttribute.REFLECT].point;
+      base.percent =
         skillData.attributes[HeroAttribute.REFLECT].percent;
+      main.point = skillData.attributes[HeroAttribute.REFLECT].point;
+      main.percent = skillData.attributes[HeroAttribute.REFLECT];
     }
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.reflectAttributes.includes(attribute.attribute)) {
+          // Main
+          main.point += attribute.value.point || 0;
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional: addtional,
+    }
   }
 
   protected buildHPRegen(
     skillData: any,
     inventoryItems: FullInventoryRepositoryModel[],
-  ): HeroAttributeValue {
-    const attributeValue = new HeroAttributeValue();
+  ): FullHeroAttributeValue {
+    const base = new HeroAttributeValue();
+    const main = new HeroAttributeValue();
 
     if (this.hpRegenSkills.includes(skillData.code)) {
-      attributeValue.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
-      attributeValue.percent =
+      base.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
+      base.percent =
         skillData.attributes[HeroAttribute.HP_REGEN].percent;
+      main.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
+      main.percent = skillData.attributes[HeroAttribute.HP_REGEN];
     }
 
-    return inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
+    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
       for (const attribute of item.userGameInventoryAttributes) {
         if (this.hpRegenAttributes.includes(attribute.attribute)) {
+          // Main
+          main.point += attribute.value.point || 0;
+          main.percent += attribute.value.percent || 0;
+
+          // Additional
           attributeValue.point += attribute.value.point || 0;
           attributeValue.percent += attribute.value.percent || 0;
         }
       }
       return attributeValue;
-    }, attributeValue);
+    }, new HeroAttributeValue());
+
+    return {
+      main,
+      base,
+      additional: addtional,
+    }
   }
 }
