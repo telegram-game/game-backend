@@ -164,8 +164,8 @@ export class GameProfileService {
       throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'ATTRIBUTE_NOT_FOUND', errorMessage: 'Attribute not found'});
     }
 
-    const maxLevel = 16;
-    const current = Math.min(level - 1, maxLevel);
-    return upgradeInformation.baseCost * Math.pow(upgradeInformation.multiplier, current);
+    const maxLevel = 100;
+    const current = Math.min(level, maxLevel);
+    return upgradeInformation.baseCost * Math.pow(current, upgradeInformation.multiplier);
   }
 }
