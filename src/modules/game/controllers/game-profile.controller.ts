@@ -18,7 +18,6 @@ export class GameProfileController {
   async getFirst(): Promise<FullGameProfile> {
     const userId = asyncLocalStorage.getStore().userInfo?.userId;
     const data = await this.gameProfileService.getFullFirst(userId, {
-      includeBalances: true,
       includeAttributes: true,
     });
     return data;

@@ -20,6 +20,14 @@ export class UserTokenClaimRepository extends BaseRepository {
     });
   }
 
+  async gets(userId: string): Promise<UserTokenClaimInfomations[]> {
+    return this.client.userTokenClaimInfomations.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async create(
     data: Partial<UserTokenClaimInfomations>,
   ): Promise<UserTokenClaimInfomations> {

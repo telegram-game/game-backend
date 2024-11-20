@@ -30,23 +30,11 @@ export class GameProfileService {
 
   async getFullFirst(
     userId: string,
-    options?: {
-      includeBalances?: boolean;
+    _?: {
       includeAttributes?: boolean;
     },
   ): Promise<FullGameProfile> {
-    const fullGameProfile = await this.createOrGetFullFirst(userId);
-    if (options?.includeBalances) {
-      const balances = await this.balanceService.getBalances(userId);
-      fullGameProfile.balances = {};
-      Object.keys(Tokens).forEach((key) => {
-        const token = Tokens[key as keyof typeof Tokens];
-        const userToken = balances.find((balance) => balance.token === token);
-        fullGameProfile.balances[token] = userToken?.balance || 0.0;
-      });
-    }
-
-    return fullGameProfile;
+    return await this.createOrGetFullFirst(userId);
   }
 
   async createOrGetFullFirst(userId: string): Promise<FullGameProfile> {

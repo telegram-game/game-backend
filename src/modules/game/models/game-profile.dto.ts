@@ -8,9 +8,6 @@ export class FullGameProfile {
   houseData: HouseData;
   skillData: any;
   hero: FullHero;
-  balances?: {
-    [key in Tokens]?: number;
-  };
   attributes?: {
     [key in UserGameProfileAttribute]?: {
       level: number;
