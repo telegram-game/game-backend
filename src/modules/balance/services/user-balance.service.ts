@@ -62,6 +62,43 @@ export class UserBalanceService {
     }, repositories);
   }
 
+  async increaseBalance(userId: string, token: Tokens, amount: number, metaData: any): Promise<number> {
+    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+    return await this.prismaService.transaction(async () => {
+      let balance = await this.userBalanceRepository.get(userId, token);
+
+      const currentBalance = balance?.balance || 0;
+      const lastBalance = currentBalance + amount;
+      
+      if (!balance) {
+        await this.userBalanceRepository.create({
+          userId,
+          token,
+          balance: lastBalance,
+        });
+      } else {
+        await this.userBalanceRepository.updateOptimistic(
+          {
+            userId,
+            token,
+            balance: lastBalance,
+          },
+          balance.updatedAt,
+        );
+      }
+
+      await this.userBalanceHistoryRepisitory.create({
+        userId,
+        token,
+        fromBalance: currentBalance,
+        toBalance: lastBalance,
+        metaData,
+      });
+
+      return lastBalance;
+    }, repositories);
+  }
+
   async claim(userId: string, token: Tokens): Promise<number> {
     const investSpeedInfo =
       configurationData.system.baseTokenInvestSpeed[token];

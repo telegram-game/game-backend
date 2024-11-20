@@ -5,12 +5,14 @@ import { CreateMissionReqeust, MissionClaimRewardRequest } from '../models/missi
 import { BusinessException } from 'src/exceptions';
 import { PrismaService } from 'src/modules/prisma';
 import { UserMissionRepository } from '../repositories/user-mission.repository';
+import { BalanceService } from 'src/modules/shared/services/balance.service';
 
 @Injectable()
 export class MissionService {
   constructor(
     private readonly missionRepository: MissionRepository,
     private readonly userMissionRepository: UserMissionRepository,
+    private readonly balanceService: BalanceService,
     private readonly prismaService: PrismaService,
   ) { }
 
@@ -90,5 +92,14 @@ export class MissionService {
       await this.missionRepository.updateToEnoughBudget(data.missionId);
 
     }, repositories);
+
+    // Call to balance service to increase the balance
+    await this.balanceService.increase(userId, mission.metaData.token, mission.metaData.rewardValue, {
+      type: 'mission-completed',
+        additionalData: {
+          missionId: data.missionId,
+          complatedAt: new Date(),
+        }
+    });
   }
 }

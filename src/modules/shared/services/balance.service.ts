@@ -19,4 +19,9 @@ export class BalanceService {
     // Should use http module to call external service
     return this.userBalanceService.decreaseBalance(userId, token, amount, metaData);
   }
+
+  async increase(userId: string, token: Tokens, amount: number, metaData: any) {
+    // Should use http module to call external service
+    return this.userBalanceService.increaseBalance(userId, token, amount, metaData);
+  }
 }
