@@ -11,6 +11,7 @@ import { SharedModule } from 'src/modules/shared/shared.module';
 import { JwtModule } from '@nestjs/jwt';
 import { GameModule } from 'src/modules/game';
 import { AuthModule } from 'src/modules/auth';
+import { MissionModule } from 'src/modules/mission';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AuthModule } from 'src/modules/auth';
     AppInformationModule,
     GameModule,
     AuthModule,
+    MissionModule,
   ],
   providers: [
     {

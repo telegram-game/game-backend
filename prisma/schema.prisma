@@ -88,6 +88,13 @@ enum Tokens {
   INGAME_2 // The token to upgrade the level of game profile & buy the items, materials in the game
 }
 
+enum MissionStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  ENOUGH_BUDGET
+}
+
 model User {
   id                          String                        @id @default(cuid()) @map("id")
   username                    String?                       @unique @map("username")
@@ -294,4 +301,36 @@ model UserTokenClaimInfomations {
 
   @@unique([userId, token])
   @@map("user_token_claim_infomations")
+}
+
+model Missions {
+  id             String        @id @default(cuid()) @map("id")
+  code           String        @unique @map("code")
+  name           String        @map("name")
+  description    String?       @map("description")
+  fromDate       DateTime      @map("from_date")
+  toDate         DateTime      @map("to_date")
+  totalBudget    Int           @map("total_budget")
+  currentClaimed Int           @map("current_claimed")
+  status         MissionStatus @default(ACTIVE) @map("status")
+
+  /// [MissionMetadata]
+  metaData    Json           @map("meta_data")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  userMission UserMissions[]
+
+  @@map("missions")
+}
+
+model UserMissions {
+  id        String   @id @default(cuid()) @map("id")
+  userId    String   @map("user_id")
+  missionId String   @map("mission_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  mission   Missions @relation(fields: [missionId], references: [id])
+
+  @@unique([userId, missionId])
+  @@map("user_missions")
 }

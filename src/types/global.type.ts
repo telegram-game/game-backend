@@ -1,4 +1,6 @@
+import { Tokens } from '@prisma/client';
 import { RequestContext } from 'src/models';
+import { SocialType } from 'src/modules/mission/models/mission';
 
 declare global {
   // eslint-disable-next-line  @typescript-eslint/no-namespace
@@ -20,6 +22,13 @@ declare global {
     export interface BalanceHistoryMetadata {
       type: 'claim' | 'deposit' | 'withdraw' | 'upgrade-attribute';
       additionalData: any;
+    }
+
+    export interface MissionMetadata {
+      token: Tokens;
+      rewardValue: number;
+      socialType: SocialType;
+      socialIdOrLink?: string;
     }
   }
 }
