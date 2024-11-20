@@ -25,4 +25,10 @@ export class GameMatchController {
       data.providerId,
     ); // Should find the way to apply game profile id
   }
+
+  @Post('fight/random')
+  async fightRandom(): Promise<GameMatchResult> {
+    const userId = asyncLocalStorage.getStore().userInfo?.userId;
+    return this.gameMatchService.fightingRandom(userId);
+  }
 }

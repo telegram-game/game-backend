@@ -14,6 +14,7 @@ export class FullGameProfile {
       description: string;
     }
   }
+  totalLevel: number;
 }
 
 export type FullGameProfileRepositoryModel  = UserGameProfiles & {

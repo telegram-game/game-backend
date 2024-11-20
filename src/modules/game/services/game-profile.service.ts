@@ -39,6 +39,44 @@ export class GameProfileService {
     return await this.createOrGetFullFirst(userId);
   }
 
+  async getRandomSameLevelGameProfile(fromLevel: number, toLevel: number): Promise<FullGameProfile> {
+    const gameProfile: FullGameProfileRepositoryModel = await this.gameProfileRepository.getRandomSameLevelGameProfile(fromLevel, toLevel, {
+      includeAttributes: true,
+    });
+
+    const attributes = {}
+    Object.keys(UserGameProfileAttribute).forEach((key) => {
+      const attribute = UserGameProfileAttribute[key as keyof typeof UserGameProfileAttribute];
+      const userGameProfileAttribute = gameProfile.userGameProfileAttributes?.find(
+        (attr) => attr.attribute === attribute,
+      );
+      attributes[attribute] = {
+        level: userGameProfileAttribute?.value || 1,
+        cost: this.calculateUpgradeCost(attribute, userGameProfileAttribute?.value || 1),
+        description: 'This is a description',
+      };
+    })
+
+    const fullHero = await this.heroService.getFullFirst(
+      gameProfile.userId,
+      gameProfile,
+    );
+
+    if (!fullHero) {
+      throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'HERO_NOT_FOUND', errorMessage: 'Hero not found'});
+    }
+
+    const houseValue = houseData[gameProfile.house];
+    return {
+      id: gameProfile.id,
+      totalLevel: gameProfile.totalLevel,
+      houseData: houseValue,
+      skillData: skills[fullHero.skill],
+      hero: fullHero,
+      attributes: attributes,
+    };
+  }
+
   async createOrGetFullFirst(userId: string): Promise<FullGameProfile> {
     let gameProfile: FullGameProfileRepositoryModel = await this.gameProfileRepository.getFirst(userId, {
       includeAttributes: true,
@@ -72,6 +110,7 @@ export class GameProfileService {
     const houseValue = houseData[gameProfile.house];
     return {
       id: gameProfile.id,
+      totalLevel: gameProfile.totalLevel,
       houseData: houseValue,
       skillData: skills[fullHero.skill],
       hero: fullHero,

@@ -7,6 +7,7 @@ import { GameProfileService } from './game-profile.service';
 import { Providers } from 'src/modules/auth/models/auth.dto';
 import { AuthService } from 'src/modules/shared/services/auth.service';
 import { BusinessException } from 'src/exceptions';
+import { FullGameProfile } from '../models/game-profile.dto';
 
 @Injectable()
 export class GameMatchService extends BaseGameMatchService {
@@ -19,8 +20,29 @@ export class GameMatchService extends BaseGameMatchService {
   }
 
   async fightingRandom(userId: string): Promise<GameMatchResult> {
-    console.log(userId);
-    throw new Error('Not implemented');
+    const leftGameProfile = await this.gameProfileService.getFullFirst(userId);
+    let rightGameProfile: FullGameProfile | null = null;
+    let fromLevel = leftGameProfile.totalLevel;
+    let toLevel = leftGameProfile.totalLevel;
+    let totalTries = 5;
+    while (!rightGameProfile && totalTries > 0) {
+      rightGameProfile = await this.gameProfileService.getRandomSameLevelGameProfile(fromLevel, toLevel);
+      fromLevel--;
+      toLevel++;
+      totalTries--;
+    }
+
+    if (!rightGameProfile) {
+      throw new BusinessException({
+        status: HttpStatus.BAD_REQUEST,
+        errorCode: '',
+        errorMessage: 'Cannot find a suitable opponent',
+      });
+    }
+
+    return this.start([leftGameProfile.hero], [rightGameProfile.hero], {
+      shouldStoreGame: false,
+    });
   }
 
   async fightingWithFriend(

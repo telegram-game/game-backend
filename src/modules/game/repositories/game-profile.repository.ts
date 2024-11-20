@@ -38,6 +38,39 @@ export class GameProfileRepository extends BaseRepository {
     });
   }
 
+  async getRandomSameLevelGameProfile(fromLevel: number, toLevel: number, options?: {
+    includeAttributes?: boolean;
+  }): Promise<FullGameProfileRepositoryModel> {
+    const count = await this.client.userGameProfiles.count({
+      where: {
+        totalLevel: {
+          gte: fromLevel,
+          lte: toLevel,
+        }
+      }
+    }).then((count) => count);
+    return this.client.userGameProfiles.findFirst({
+      where: {
+        totalLevel: {
+          gte: fromLevel,
+          lte: toLevel,
+        }
+      },
+      include: {
+        userGameProfileAttributes: options?.includeAttributes,
+      },
+      skip: Math.floor(Math.random() * count),
+    }).then((gameProfile) => {
+      if (!gameProfile) {
+        return null;
+      }
+      return {
+        ...gameProfile,
+        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
+      } as FullGameProfileRepositoryModel;
+    });
+  }
+
   async getFirst(userId: string,
     options?: {
       includeAttributes?: boolean;
