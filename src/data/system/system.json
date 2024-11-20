@@ -44,11 +44,18 @@
     "upgradeInformation": {
         "POCKET": {
             "baseCost": 20, 
-            "multiplier": 2
+            "multiplier": 2,
+            "token": "INGAME"
         },
         "SALARY": {
             "baseCost": 20, 
-            "multiplier": 2
+            "multiplier": 2,
+            "token": "INGAME"
+        },
+        "GAME_PROFILE_LEVEL": {
+            "baseCost": 30, 
+            "multiplier": 2,
+            "token": "INGAME_2"
         }
     }
 }

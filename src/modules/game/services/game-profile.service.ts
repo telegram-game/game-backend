@@ -173,14 +173,14 @@ export class GameProfileService {
 
     if (!options?.ignoreCost) {
       const cost = this.calculateUpgradeCost(attribute, attributeLevel);
-      const balance = await this.balanceService.get(userId, Tokens.INGAME);
+      const balance = await this.balanceService.get(userId, upgradeInformation.token);
       if (!balance || balance.balance < cost) {
         throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance' });
       }
 
       // Update balance and balance history
       // Add event to upgrade attribute. But now just call to update in database
-      await this.balanceService.decrease(userId, Tokens.INGAME, cost, {
+      await this.balanceService.decrease(userId, upgradeInformation.token, cost, {
         type: 'upgrade-attribute',
         additionalData: {
           attribute,

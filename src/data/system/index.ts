@@ -29,6 +29,7 @@ export class SystemConfigData {
     [key in UserGameProfileAttribute]?: {
       baseCost: number;
       multiplier: number;
+      token: Tokens;
     }
   }
 }

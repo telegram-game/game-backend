@@ -28,6 +28,7 @@ enum UserProvider {
 enum UserGameProfileAttribute {
   POCKET
   SALARY
+  GAME_PROFILE_LEVEL
 }
 
 enum GameHouse {
