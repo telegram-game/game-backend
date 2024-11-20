@@ -2,10 +2,9 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { GameProfileRepository } from '../repositories/game-profile.repository';
 import { FullGameProfile, FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
-import { GameHouse, Tokens, UserGameProfileAttribute, UserGameProfileAttributes, UserGameProfiles } from '@prisma/client';
+import { GameHouse, Tokens, UserGameProfileAttribute, UserGameProfiles } from '@prisma/client';
 import { configurationData } from '../../../data';
 import { BalanceService } from 'src/modules/shared/services/balance.service';
-import { AuthService } from 'src/modules/shared/services/auth.service';
 import { BusinessException } from 'src/exceptions';
 import { GameProfileAttributeRepository } from '../repositories/game-profile-attribute.repository';
 
@@ -20,7 +19,6 @@ export class GameProfileService {
     private readonly gameProfileAttributeRepository: GameProfileAttributeRepository,
     private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
-    private readonly authService: AuthService,
   ) {}
 
   async getByIdOrFirst(
@@ -66,7 +64,7 @@ export class GameProfileService {
     const attributes = {}
     Object.keys(UserGameProfileAttribute).forEach((key) => {
       const attribute = UserGameProfileAttribute[key as keyof typeof UserGameProfileAttribute];
-      const userGameProfileAttribute = gameProfile.userGameProfileAttributes.find(
+      const userGameProfileAttribute = gameProfile.userGameProfileAttributes?.find(
         (attr) => attr.attribute === attribute,
       );
       attributes[attribute] = {

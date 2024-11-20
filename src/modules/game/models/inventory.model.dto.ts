@@ -19,7 +19,7 @@ export class BuyChestRequest {
   chestCode: string;
 
   @IsString()
-  gameProfileId?: string;
+  gameProfileId: string;
 
   @Optional()
   code: string;

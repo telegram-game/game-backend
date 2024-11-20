@@ -37,6 +37,7 @@ export class BaseHeroService {
   protected readonly defaultCritDamegeLevel = 1;
   protected readonly maximumCritRate = 90;
   protected readonly maximumEvasion = 90;
+  protected readonly defaultFreeItemChestCode = 'FIRE_SWORD_L1';
 
   private increaseByPercent(value: number, percent: number, max?: number): number {
     const increase = Math.floor(value * (percent / 100));
@@ -58,8 +59,8 @@ export class BaseHeroService {
       });
     }
 
-    const pocketAttribute = userGameProfile.userGameProfileAttributes.find(att => att.attribute === UserGameProfileAttribute.POCKET);
-    const salaryAttribute = userGameProfile.userGameProfileAttributes.find(att => att.attribute === UserGameProfileAttribute.SALARY);
+    const pocketAttribute = userGameProfile.userGameProfileAttributes?.find(att => att.attribute === UserGameProfileAttribute.POCKET);
+    const salaryAttribute = userGameProfile.userGameProfileAttributes?.find(att => att.attribute === UserGameProfileAttribute.SALARY);
     const pocket = pocketAttribute ? pocketAttribute.value : 1;
     const salary = salaryAttribute ? salaryAttribute.value : 1;
     const increasePercent = pocket * 10 + salary * 10; // total percents

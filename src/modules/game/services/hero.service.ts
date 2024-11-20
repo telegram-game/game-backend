@@ -2,12 +2,15 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { FullHero } from '../models/hero.model.dto';
 import { HeroRepository } from '../repositories/hero.repository';
 import { BaseHeroService } from './hero.base-service';
-import { HeroSkill, UserGameProfiles } from '@prisma/client';
+import { HeroSkill } from '@prisma/client';
 import { PrismaService } from 'src/modules/prisma';
 import { InventoryRepository } from '../repositories/inventory.repository';
 import { HeroSkillRepository } from '../repositories/hero-skill.repository';
 import { BusinessException } from 'src/exceptions';
 import { FullGameProfileRepositoryModel } from '../models/game-profile.dto';
+import { InventoryService } from './inventory.service';
+import { Logger } from 'src/modules/loggers';
+import { HeroItemService } from './hero-item.service';
 
 @Injectable()
 export class HeroService extends BaseHeroService {
@@ -16,7 +19,10 @@ export class HeroService extends BaseHeroService {
     private readonly heroRepository: HeroRepository,
     private readonly inventoryRepository: InventoryRepository,
     private readonly heroSkillRepository: HeroSkillRepository,
-    private prismaService: PrismaService,
+    private readonly inventoryService: InventoryService,
+    private readonly heroItemService: HeroItemService,
+    private readonly logger: Logger,
+    private readonly prismaService: PrismaService,
   ) {
     super();
   }
@@ -51,16 +57,17 @@ export class HeroService extends BaseHeroService {
       return fullHero;
     }
 
-    await this.prismaService
-      .$transaction(async (tx: PrismaService) => {
-        this.heroRepository.joinTransaction(tx);
-        this.heroSkillRepository.joinTransaction(tx);
+    let heroId = fullHero?.id;
 
+    const repositories = [this.heroRepository, this.heroSkillRepository];
+    await this.prismaService
+      .transaction(async () => {
         // Add hero
         const hero = await this.heroRepository.createDefault(
           userId,
           userGameProfile.id,
         );
+        heroId = hero.id;
 
         // Add skill
         await this.heroSkillRepository.create({
@@ -68,11 +75,27 @@ export class HeroService extends BaseHeroService {
           userGameHeroId: hero.id,
           skill: this.defaultSkill,
         });
-      })
-      .finally(() => {
-        this.heroRepository.leftTransaction();
-        this.heroSkillRepository.leftTransaction();
+
+      }, repositories);
+
+    // This is for the first free item. We can ignore the error here
+    //Add first free item
+    if (!fullHero) {
+      const inventory = await this.inventoryService.openChest(this.defaultFreeItemChestCode, userId, userGameProfile.id).catch((error) => {
+        this.logger.error('Error while opening first free item', error);
+        return null;
       });
+      if (inventory) {
+        // Equip the item
+        await this.heroItemService.equip(userId, {
+          heroId: heroId,
+          inventoryId: inventory.id,
+          gameProfileId: userGameProfile.id,
+        }).catch((error) => {
+          this.logger.error('Error while equipping first free item', error);
+        });
+      }
+    }
 
     return await this.getFullFirst(userId, userGameProfile);
   }

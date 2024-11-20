@@ -32,10 +32,8 @@ export class UserService {
       };
     }
 
-    return await this.prismaService.$transaction(async (tx: PrismaService) => {
-      this.userRepository.joinTransaction(tx);
-      this.userProfileRepository.joinTransaction(tx);
-
+    const repositories = [this.userRepository, this.userProfileRepository];
+    return await this.prismaService.transaction(async () => {
       const userData = await this.userRepository.create({
         id: userId,
         provider: profile.provider,
@@ -53,6 +51,6 @@ export class UserService {
         ...userData,
         userProfile: profileData,
       };
-    });
+    }, repositories);
   }
 }

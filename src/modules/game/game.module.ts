@@ -18,9 +18,10 @@ import { HeroItemService } from './services/hero-item.service';
 import { GameMatchController } from './controllers/game-match.controller';
 import { GameMatchService } from './services/game-match.service';
 import { GameProfileAttributeRepository } from './repositories/game-profile-attribute.repository';
+import { LoggerModule } from '../loggers';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, LoggerModule],
   controllers: [
     GameProfileController,
     HeroController,
@@ -37,10 +38,10 @@ import { GameProfileAttributeRepository } from './repositories/game-profile-attr
     InventoryAttributeRepository,
     GameProfileRepository,
     GameProfileAttributeRepository,
+    InventoryService,
     HeroService,
     GameProfileService,
     GameMatchService,
-    InventoryService,
     HeroItemService,
   ],
   exports: [],

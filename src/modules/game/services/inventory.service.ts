@@ -1,10 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { ItemCode, ItemType } from '@prisma/client';
+import { ItemCode, ItemType, UserGameInventories } from '@prisma/client';
 import { InventoryRepository } from '../repositories/inventory.repository';
 import { SupportService } from 'src/modules/shared/services/support.service';
 import { BusinessException } from 'src/exceptions';
 import { PrismaService } from 'src/modules/prisma';
-import { GameProfileService } from './game-profile.service';
 import { InventoryAttributeRepository } from '../repositories/inventory-attribute.repository';
 import { BaseInventoryService } from './inventory.base-service';
 import { configurationData } from '../../../data/index';
@@ -16,14 +15,12 @@ export class InventoryService extends BaseInventoryService {
   constructor(
     inventoryRepository: InventoryRepository,
     inventoryAttributeRepository: InventoryAttributeRepository,
-    gameProfileService: GameProfileService,
     supportService: SupportService,
     prismaService: PrismaService,
   ) {
     super(
       inventoryRepository,
       inventoryAttributeRepository,
-      gameProfileService,
       supportService,
       prismaService,
     );
@@ -36,8 +33,8 @@ export class InventoryService extends BaseInventoryService {
   async openChest(
     chestCode: string,
     userId: string,
-    gameProfileId?: string,
-  ): Promise<void> {
+    gameProfileId: string,
+  ): Promise<UserGameInventories> {
     const chest = this.itemData.chests[chestCode];
     if (!chest) {
       throw new BusinessException({
@@ -46,10 +43,6 @@ export class InventoryService extends BaseInventoryService {
         errorMessage: 'Chest not found',
       });
     }
-
-    gameProfileId =
-      gameProfileId ??
-      (await this.gameProfileService.getByIdOrFirst(userId)).id;
 
     // Random the item
     const itemType = this.supportService.randomWithRate(chest.itemTypeRates);
@@ -69,10 +62,9 @@ export class InventoryService extends BaseInventoryService {
         chest.flexibleItemAttributesCount,
         true,
       );
-    await this.prismaService.$transaction(async (tx: PrismaService) => {
-      this.inventoryRepository.joinTransaction(tx);
-      this.inventoryAttributeRepository.joinTransaction(tx);
 
+    const repositories = [this.inventoryRepository, this.inventoryAttributeRepository];
+    return await this.prismaService.transaction(async () => {
       const inventory = await this.inventoryRepository.create({
         userId,
         userGameProfileId: gameProfileId,
@@ -131,6 +123,8 @@ export class InventoryService extends BaseInventoryService {
           canRoll: true,
         });
       }
-    });
+
+      return inventory;
+    }, repositories)
   }
 }

@@ -27,11 +27,8 @@ export class UserBalanceService {
   }
 
   async decreaseBalance(userId: string, token: Tokens, amount: number, metaData: any): Promise<number> {
-    return await this.prismaService.$transaction(async (tx: PrismaService) => {
-      this.userBalanceRepository.joinTransaction(tx);
-      this.userTokenClaimRepository.joinTransaction(tx);
-      this.userBalanceHistoryRepisitory.joinTransaction(tx);
-
+    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+    return await this.prismaService.transaction(async () => {
       let balance = await this.userBalanceRepository.get(userId, token);
 
       const currentBalance = balance.balance;
@@ -62,7 +59,7 @@ export class UserBalanceService {
       });
 
       return lastBalance;
-    });
+    }, repositories);
   }
 
   async claim(userId: string, token: Tokens): Promise<number> {
@@ -103,11 +100,8 @@ export class UserBalanceService {
     }
 
     const calculatedToken = speed * totalTimeInSeconds;
-    return await this.prismaService.$transaction(async (tx: PrismaService) => {
-      this.userBalanceRepository.joinTransaction(tx);
-      this.userTokenClaimRepository.joinTransaction(tx);
-      this.userBalanceHistoryRepisitory.joinTransaction(tx);
-
+    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+    return await this.prismaService.transaction(async () => {
       let currentBalance = 0;
       let lastBalance = 0;
       let balance = await this.userBalanceRepository.get(userId, token);
@@ -164,6 +158,6 @@ export class UserBalanceService {
       }
 
       return lastBalance;
-    });
+    }, repositories);
   }
 }
