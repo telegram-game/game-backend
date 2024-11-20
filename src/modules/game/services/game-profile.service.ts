@@ -171,7 +171,7 @@ export class GameProfileService {
       lastAttributeLevel = attributeLevel + 1;
     }
 
-    if (options?.ignoreCost) {
+    if (!options?.ignoreCost) {
       const cost = this.calculateUpgradeCost(attribute, attributeLevel);
       const balance = await this.balanceService.get(userId, Tokens.INGAME);
       if (!balance || balance.balance < cost) {

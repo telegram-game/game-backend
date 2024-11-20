@@ -6,6 +6,7 @@ import { UserService } from "../src/modules/auth/services/user.service";
 import * as random from 'random-name'
 import { UserGameProfileAttribute, UserProvider } from "@prisma/client";
 import '../src/types/global.type'
+import { randomUUID } from "crypto";
 
 async function main() {
     console.log(random.first(), random.last());
@@ -20,17 +21,18 @@ async function main() {
             try {
                 const userService = await app.resolve<UserService>(UserService);
                 const gameProfileService = await app.resolve<GameProfileService>(GameProfileService);
-                
+
                 const firstName = random.first();
                 const lastName = random.last();
-                const name = `${firstName} ${lastName}`;
-                const userId = name.replaceAll(' ', '_').toLowerCase();
+                const providerId = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+                const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@gmail.com`;
+                const userId = randomUUID();
                 const profile = {
                     provider: UserProvider.SEED,
-                    providerId: userId,
+                    providerId: providerId,
                     firstName: firstName,
                     lastName: lastName,
-                    email: `${userId}@gmail.com`
+                    email: email
                 }
                 const level = i;
                 const pocket = Math.floor(Math.random() * (i - 1));

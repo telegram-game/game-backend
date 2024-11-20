@@ -1,7 +1,7 @@
 {
     "bulk": {
         "fromLevel": 2,
-        "toLevel": 2,
-        "numberOfLevels": 1
+        "toLevel": 20,
+        "numberOfLevels": 20
     }
 }
