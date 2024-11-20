@@ -7,6 +7,7 @@ import { configurationData } from '../../../data';
 import { BalanceService } from 'src/modules/shared/services/balance.service';
 import { BusinessException } from 'src/exceptions';
 import { GameProfileAttributeRepository } from '../repositories/game-profile-attribute.repository';
+import { PrismaService } from 'src/modules/prisma';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -19,6 +20,7 @@ export class GameProfileService {
     private readonly gameProfileAttributeRepository: GameProfileAttributeRepository,
     private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async getByIdOrFirst(
@@ -46,6 +48,7 @@ export class GameProfileService {
       gameProfile = await this.gameProfileRepository.create({
         userId,
         house: this.defaultHouse,
+        totalLevel: Object.keys(UserGameProfileAttribute).length, // default
       });
     }
 
@@ -126,7 +129,7 @@ export class GameProfileService {
       lastAttributeLevel = attributeLevel + 1;
     }
     
-    const cost = this.calculateUpgradeCost(attribute, lastAttributeLevel);
+    const cost = this.calculateUpgradeCost(attribute, attributeLevel);
     const balance = await this.balanceService.get(userId, Tokens.INGAME);
     if (!balance || balance.balance < cost) {
       throw new BusinessException({status: HttpStatus.BAD_REQUEST, errorCode: 'INSUFFICIENT_BALANCE', errorMessage: 'Insufficient balance'});
@@ -143,19 +146,28 @@ export class GameProfileService {
         toLevel: lastAttributeLevel,
       }
     });
-    if (attr) {
-      await this.gameProfileAttributeRepository.updateOptimstic({
-        id: attr.id,
-        value: lastAttributeLevel,
-      }, attr.updatedAt);
-    } else {
-      await this.gameProfileAttributeRepository.create({
-        userId,
-        userGameProfileId: gameProfileId,
-        attribute,
-        value: lastAttributeLevel,
+
+    const repositories = [this.gameProfileAttributeRepository, this.gameProfileRepository];
+    await this.prismaService.transaction(async () => {
+      if (attr) {
+        await this.gameProfileAttributeRepository.updateOptimstic({
+          id: attr.id,
+          value: lastAttributeLevel,
+        }, attr.updatedAt);
+      } else {
+        await this.gameProfileAttributeRepository.create({
+          userId,
+          userGameProfileId: gameProfileId,
+          attribute,
+          value: lastAttributeLevel,
+        });
+      }
+      const totalLevel = await this.gameProfileAttributeRepository.getTotalLevel(userId, gameProfileId);
+      await this.gameProfileRepository.update({
+        id: gameProfileId,
+        totalLevel: totalLevel,
       });
-    }
+    }, repositories);
   }
 
   private calculateUpgradeCost(attribute: UserGameProfileAttribute, level: number): number {

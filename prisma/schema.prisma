@@ -126,13 +126,14 @@ model UserProfiles {
 }
 
 model UserGameProfiles {
-  id                        String                     @id @default(cuid()) @map("id")
-  userId                    String                     @unique @map("user_id")
-  house                     GameHouse                  @map("house")
-  class                     String?                    @map("class")
-  createdAt                 DateTime                   @default(now()) @map("created_at")
-  updatedAt                 DateTime                   @updatedAt @map("updated_at")
-  user                      User                       @relation(fields: [userId], references: [id])
+  id                        String                      @id @default(cuid()) @map("id")
+  userId                    String                      @unique @map("user_id")
+  house                     GameHouse                   @map("house")
+  class                     String?                     @map("class")
+  totalLevel                Int                         @default(2) @map("total_power") // The default should be UserGameProfileAttribute length
+  createdAt                 DateTime                    @default(now()) @map("created_at")
+  updatedAt                 DateTime                    @updatedAt @map("updated_at")
+  user                      User                        @relation(fields: [userId], references: [id])
   userGameHero              UserGameHeros[]
   userGameInventories       UserGameInventories[]
   userGameProfileAttributes UserGameProfileAttributes[]
