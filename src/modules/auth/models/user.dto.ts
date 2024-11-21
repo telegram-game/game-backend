@@ -6,4 +6,5 @@ export type FullUserRepositoryModel = User & {
 
 export type FullUserModel = User & {
   userProfile: UserProfiles;
+  isNew: boolean;
 };

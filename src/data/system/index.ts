@@ -32,6 +32,13 @@ export class SystemConfigData {
       token: Tokens;
     }
   }
+  referralCampaign?: {
+    userReward: number;
+    premiumUserReward: number;
+    referrerReward: number;
+    premiumReferrerReward: number;
+    rewardToken: Tokens;
+  }
 }
 
 export const system = systemData as SystemConfigData;

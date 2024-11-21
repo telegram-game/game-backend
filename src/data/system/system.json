@@ -57,5 +57,12 @@
             "multiplier": 2,
             "token": "INGAME_2"
         }
+    },
+    "referralCampaign": {
+        "userReward": 20,
+        "premiumUserReward": 100,
+        "referrerReward": 20,
+        "premiumReferrerReward": 100,
+        "rewardToken": "INGAME"
     }
 }

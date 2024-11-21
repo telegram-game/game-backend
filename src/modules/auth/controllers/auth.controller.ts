@@ -9,6 +9,8 @@ import { NotRequireAuthentication } from 'src/decorators';
 import { AuthService } from '../services/auth.service';
 import { TelegramService } from 'src/modules/shared/services/telegram.service';
 import { BusinessException } from 'src/exceptions';
+import { UserReferralService } from '../services/user-referral.service';
+import { Logger } from 'src/modules/loggers';
 
 @Controller({
   path: ['/api/v1.0/auth'],
@@ -18,7 +20,9 @@ export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly userReferralService: UserReferralService,
     private readonly telegramService: TelegramService,
+    private readonly logger: Logger,
   ) {}
 
   @Post('/login/by-provider')
@@ -32,16 +36,22 @@ export class AuthController {
       throw new BusinessException({status: HttpStatus.UNAUTHORIZED, errorCode: 'UNAUTHORIZED', errorMessage: 'Unauthorized'});
     }
 
-    const userId = userData.id.toString();
     const profile = {
       provider: data.provider,
-      providerId: userId,
+      providerId: userData.id.toString(),
       firstName: userData.first_name,
       lastName: userData.last_name,
       email: '',
       avatar: userData.photo_url,
     };
-    const user = await this.userService.createOrGetFullById(userId, profile);
+    const user = await this.userService.createOrGetFullByProvider(profile.provider, profile.providerId, profile);
+
+    if (user.isNew && data.referralCode) {
+      // TODO: Implement referral code logic
+      this.userReferralService.executeReferralCodeLogic(user, data.provider, data.referralCode).catch((err) => {
+        this.logger.error('Error when execute the referral logic', err);
+      });
+    }
 
     return this.authService.generateTokens(user.id, profile);
   }

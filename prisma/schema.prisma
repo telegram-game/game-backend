@@ -115,6 +115,7 @@ model User {
   userTokenBalanceHistories   UserTokenBalanceHistories[]
   userTokenClaimInfomations   UserTokenClaimInfomations[]
   userAttributes              UserGameProfileAttributes[]
+  UserReferrals               UserReferrals[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -132,6 +133,20 @@ model UserProfiles {
   user      User     @relation(fields: [userId], references: [id])
 
   @@map("user_profiles")
+}
+
+model UserReferrals {
+  id             String       @id @default(cuid()) @map("id")
+  userId         String       @map("user_id")
+  provider       UserProvider @map("provider")
+  providerUserId String       @map("provider_user_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerUserId])
+  @@map("user_referrals")
 }
 
 model UserGameProfiles {

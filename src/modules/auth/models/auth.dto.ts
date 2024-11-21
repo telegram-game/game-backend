@@ -1,5 +1,6 @@
+import { Optional } from '@nestjs/common';
 import { UserProvider } from '@prisma/client';
-import { Allow, IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 
 export enum AllowedProviders {
   TELEGRAM = 'TELEGRAM',
@@ -21,6 +22,10 @@ export class LoginProviderRequest {
 
   @IsString()
   code: string;
+
+  @Optional()
+  @IsString()
+  referralCode?: string;
 }
 
 export class RefreshTokenRequest {

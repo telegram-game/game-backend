@@ -5,10 +5,12 @@ import { UserRepository } from './repositories/user.repository';
 import { AuthController } from './controllers/auth.controller';
 import { UserProfileRepository } from './repositories/user-profile.repository';
 import { AuthService } from './services/auth.service';
+import { UserReferralService } from './services/user-referral.service';
+import { UserReferralRepository } from './repositories/user-referral.repository';
 @Module({
   imports: [PrismaModule],
   controllers: [AuthController],
-  providers: [UserProfileRepository, UserRepository, AuthService, UserService],
+  providers: [UserProfileRepository, UserRepository, UserReferralRepository, AuthService, UserService, UserReferralService],
   exports: [UserService],
 })
 export class AuthModule {}
