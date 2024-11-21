@@ -13,10 +13,9 @@ export class UserReferralService {
     private readonly userReferralRepository: UserReferralRepository,
     private readonly userService: UserService,
     private readonly balanceService: BalanceService,
-    private prismaService: PrismaService,
   ) {}
 
-  async executeReferralCodeLogic(user: FullUserModel, provider: UserProvider, referralCode: string): Promise<void> {
+  async executeReferralCodeLogic(user: FullUserModel, provider: UserProvider, referralCode: string, isPremium?: boolean): Promise<void> {
     const referralCampaign = configurationData.system.referralCampaign;
     if (!referralCampaign) {
       return;
@@ -34,24 +33,28 @@ export class UserReferralService {
     })
 
     // Increase referrer balance
-    await this.balanceService.increase(referrerUser.id, referralCampaign.rewardToken, referralCampaign.referrerReward, {
+    const referrerReward = isPremium ? referralCampaign.premiumReferrerReward : referralCampaign.referrerReward;
+    await this.balanceService.increase(referrerUser.id, referralCampaign.rewardToken, referrerReward, {
       type: 'referral-completed',
         additionalData: {
           referralCampaign,
           referralAt: new Date(),
           provider: provider,
           referralCode: referralCode,
+          isPremium,
         }
     });
 
     // Increase user balance
-    await this.balanceService.increase(user.id, referralCampaign.rewardToken, referralCampaign.userReward, {
+    const userReward = isPremium ? referralCampaign.premiumUserReward : referralCampaign.userReward;
+    await this.balanceService.increase(user.id, referralCampaign.rewardToken, userReward, {
       type: 'referral-completed',
         additionalData: {
           referralCampaign,
           referralAt: new Date(),
           provider: provider,
           referralCode: referralCode,
+          isPremium,
         }
     });
   }

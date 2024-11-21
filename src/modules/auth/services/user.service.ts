@@ -25,7 +25,6 @@ export class UserService {
 
   async createOrGetFullByProvider(provider: UserProvider, providerId: string, profile: UserProfileModel): Promise<FullUserModel> {
     const user = await this.userRepository.getByProvider(provider, providerId);
-    console.log(provider, providerId, profile, user); 
     return await this.createOrGetFullById(user?.id, profile);
   }
 
