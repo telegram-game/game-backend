@@ -48,7 +48,7 @@ export class AuthController {
 
     if (user.isNew && data.referralCode) {
       // TODO: Implement referral code logic
-      this.userReferralService.executeReferralCodeLogic(user, data.provider, data.referralCode, userData.is_premium).catch((err) => {
+      this.userReferralService.executeReferralCodeLogic(user, data.provider, profile.providerId, data.referralCode, userData.is_premium).catch((err) => {
         this.logger.error('Error when execute the referral logic', err);
       });
     }

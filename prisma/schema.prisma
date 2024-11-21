@@ -115,7 +115,7 @@ model User {
   userTokenBalanceHistories   UserTokenBalanceHistories[]
   userTokenClaimInfomations   UserTokenClaimInfomations[]
   userAttributes              UserGameProfileAttributes[]
-  UserReferrals               UserReferrals[]
+  userReferrals               UserReferrals[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -140,10 +140,11 @@ model UserReferrals {
   userId         String       @map("user_id")
   provider       UserProvider @map("provider")
   providerUserId String       @map("provider_user_id")
+  referredUserId String       @map("referred_user_id")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id])
+  referredUser User @relation(fields: [referredUserId], references: [id])
 
   @@unique([provider, providerUserId])
   @@map("user_referrals")

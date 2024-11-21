@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/modules/prisma';
 import { FullUserModel } from '../models/user.dto';
 import { UserService } from './user.service';
 import { UserReferralRepository } from '../repositories/user-referral.repository';
 import { UserProvider } from '@prisma/client';
 import { BalanceService } from 'src/modules/shared/services/balance.service';
 import {configurationData} from '../../../data'
+import { GetReferralPagingResponse } from '../models/user-referral.dto';
 
 @Injectable()
 export class UserReferralService {
@@ -15,7 +15,24 @@ export class UserReferralService {
     private readonly balanceService: BalanceService,
   ) {}
 
-  async executeReferralCodeLogic(user: FullUserModel, provider: UserProvider, referralCode: string, isPremium?: boolean): Promise<void> {
+  async getPaging(userId: string, page: number, limit: number): Promise<GetReferralPagingResponse> {
+    limit = Math.min(limit ?? 100, 100);
+    page = Math.max(page ?? 1, 1);
+    return this.userReferralRepository.getPaging(userId, page, limit).then((data) => {
+      return {
+        total: data.total,
+        page: page,
+        limit: limit,
+        data: data.data.map((item) => ({
+          userId: item.referredUserId,
+          firstName: item.referredUser?.userProfile[0]?.firstName || '',
+          lastName: item.referredUser?.userProfile[0]?.lastName || '',
+        })),
+      };
+    });
+  }
+
+  async executeReferralCodeLogic(user: FullUserModel, provider: UserProvider, providerId: string, referralCode: string, isPremium?: boolean): Promise<void> {
     const referralCampaign = configurationData.system.referralCampaign;
     if (!referralCampaign) {
       return;
@@ -27,9 +44,10 @@ export class UserReferralService {
     }
 
     await this.userReferralRepository.create({
-      userId: user.id,
+      userId: referrerUser.id,
       provider,
-      providerUserId: user.id,
+      providerUserId: providerId,
+      referredUserId: user.id,
     })
 
     // Increase referrer balance
