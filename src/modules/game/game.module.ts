@@ -19,6 +19,8 @@ import { GameMatchController } from './controllers/game-match.controller';
 import { GameMatchService } from './services/game-match.service';
 import { GameProfileAttributeRepository } from './repositories/game-profile-attribute.repository';
 import { LoggerModule } from '../loggers';
+import { GameSeasonRepository } from './repositories/game-season.repository';
+import { GameSeasonService } from './services/game-seasion.service';
 
 @Module({
   imports: [PrismaModule, LoggerModule],
@@ -38,11 +40,13 @@ import { LoggerModule } from '../loggers';
     InventoryAttributeRepository,
     GameProfileRepository,
     GameProfileAttributeRepository,
+    GameSeasonRepository,
     InventoryService,
     HeroService,
     GameProfileService,
     GameMatchService,
     HeroItemService,
+    GameSeasonService,
   ],
   exports: [],
 })

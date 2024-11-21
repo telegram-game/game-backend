@@ -2,12 +2,13 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { GameProfileRepository } from '../repositories/game-profile.repository';
 import { FullGameProfile, FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 import { HeroService } from './hero.service';
-import { GameHouse, Tokens, UserGameProfileAttribute, UserGameProfiles } from '@prisma/client';
+import { GameHouse, UserGameProfileAttribute, UserGameProfiles } from '@prisma/client';
 import { configurationData } from '../../../data';
 import { BalanceService } from 'src/modules/shared/services/balance.service';
 import { BusinessException } from 'src/exceptions';
 import { GameProfileAttributeRepository } from '../repositories/game-profile-attribute.repository';
 import { PrismaService } from 'src/modules/prisma';
+import { GameSeasonService } from './game-seasion.service';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
@@ -20,6 +21,7 @@ export class GameProfileService {
     private readonly gameProfileAttributeRepository: GameProfileAttributeRepository,
     private readonly balanceService: BalanceService,
     private readonly heroService: HeroService,
+    private readonly gameSeasonService: GameSeasonService,
     private readonly prismaService: PrismaService,
   ) { }
 
@@ -78,8 +80,11 @@ export class GameProfileService {
   }
 
   async createOrGetFullFirst(userId: string): Promise<FullGameProfile> {
+    const gameSeason = await this.gameSeasonService.getFirstActive();
+    const includeGameSeasonId = gameSeason ? gameSeason.id : undefined;
     let gameProfile: FullGameProfileRepositoryModel = await this.gameProfileRepository.getFirst(userId, {
       includeAttributes: true,
+      includeGameSeasonId,
     });
 
     if (!gameProfile) {
@@ -115,6 +120,8 @@ export class GameProfileService {
       skillData: skills[fullHero.skill],
       hero: fullHero,
       attributes: attributes,
+      currentGameProfileSeason: gameProfile.currentGameProfileSeason,
+      currentGameSeasons: gameSeason,
     };
   }
 

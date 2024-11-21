@@ -95,6 +95,12 @@ enum MissionStatus {
   ENOUGH_BUDGET
 }
 
+enum SeasonStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
 model User {
   id                          String                        @id @default(cuid()) @map("id")
   username                    String?                       @unique @map("username")
@@ -116,6 +122,7 @@ model User {
   userTokenClaimInfomations   UserTokenClaimInfomations[]
   userAttributes              UserGameProfileAttributes[]
   userReferrals               UserReferrals[]
+  userGameSeason              UserGameProfileGameSeason[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -162,6 +169,7 @@ model UserGameProfiles {
   userGameHero              UserGameHeros[]
   userGameInventories       UserGameInventories[]
   userGameProfileAttributes UserGameProfileAttributes[]
+  userGameSeasons           UserGameProfileGameSeason[]
 
   @@map("user_game_profiles")
 }
@@ -331,10 +339,10 @@ model Missions {
   status         MissionStatus @default(ACTIVE) @map("status")
 
   /// [MissionMetadata]
-  metaData    Json           @map("meta_data")
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
-  userMission UserMissions[]
+  metaData     Json           @map("meta_data")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  userMissions UserMissions[]
 
   @@map("missions")
 }
@@ -349,4 +357,36 @@ model UserMissions {
 
   @@unique([userId, missionId])
   @@map("user_missions")
+}
+
+model GameSeasons {
+  id              String                      @id @default(cuid()) @map("id")
+  code            String                      @unique @map("code")
+  name            String                      @map("name")
+  description     String?                     @map("description")
+  fromDate        DateTime                    @map("from_date")
+  toDate          DateTime                    @map("to_date")
+  status          SeasonStatus                @default(ACTIVE) @map("status")
+  createdAt       DateTime                    @default(now()) @map("created_at")
+  updatedAt       DateTime                    @updatedAt @map("updated_at")
+  userGameSeasons UserGameProfileGameSeason[]
+
+  @@map("game_seasons")
+}
+
+model UserGameProfileGameSeason {
+  id                String   @id @default(cuid()) @map("id")
+  userId            String   @map("user_id")
+  userGameProfileId String   @map("user_game_profile_id")
+  seasonId          String   @map("season_id")
+  rankPoint         Int      @default(0) @map("rank_point")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user    User             @relation(fields: [userId], references: [id])
+  profile UserGameProfiles @relation(fields: [userGameProfileId], references: [id])
+  season  GameSeasons      @relation(fields: [seasonId], references: [id])
+
+  @@unique([userGameProfileId, seasonId])
+  @@map("user_game_profile_game_seasons")
 }
