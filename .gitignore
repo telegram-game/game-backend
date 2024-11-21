@@ -47,3 +47,5 @@
 # Prisma seeds files
 prisma/seeds/**
 .vscode/launch.json
+
+**/src/verify.ts

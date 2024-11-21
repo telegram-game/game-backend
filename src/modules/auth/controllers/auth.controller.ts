@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import {
   LoginProviderRequest,
   LoginResponse,
@@ -7,7 +7,8 @@ import {
 import { UserService } from '../services/user.service';
 import { NotRequireAuthentication } from 'src/decorators';
 import { AuthService } from '../services/auth.service';
-import { randomUUID } from 'crypto';
+import { TelegramService } from 'src/modules/shared/services/telegram.service';
+import { BusinessException } from 'src/exceptions';
 
 @Controller({
   path: ['/api/v1.0/auth'],
@@ -17,6 +18,7 @@ export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly telegramService: TelegramService,
   ) {}
 
   @Post('/login/by-provider')
@@ -25,14 +27,20 @@ export class AuthController {
     @Body() data: LoginProviderRequest,
   ): Promise<LoginResponse> {
     // temporary solution. Will use data.code as the userId. Profile will be mocked.
-    const userId = data.code || randomUUID(); // get userId via the provider way
+    const userData = this.telegramService.verify(data.code);
+    if (!userData) {
+      throw new BusinessException({status: HttpStatus.UNAUTHORIZED, errorCode: 'UNAUTHORIZED', errorMessage: 'Unauthorized'});
+    }
+
+    const userId = userData.id.toString();
     const profile = {
       provider: data.provider,
       providerId: userId,
-      firstName: `First-name-${userId}`,
-      lastName: `Last-name-${userId}`,
-      email: `${userId}@gmail.com`, // random email
-    }; // Mock profile
+      firstName: userData.first_name,
+      lastName: userData.last_name,
+      email: '',
+      avatar: userData.photo_url,
+    };
     const user = await this.userService.createOrGetFullById(userId, profile);
 
     return this.authService.generateTokens(user.id, profile);

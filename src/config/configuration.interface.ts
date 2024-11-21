@@ -24,4 +24,5 @@ export interface Configuration {
   jwtAccesstokenPublicKey?: string;
   jwtRefreshtokenPrivateKey?: string;
   jwtRefreshtokenPublicKey?: string;
+  telegramBotToken: string;
 }
