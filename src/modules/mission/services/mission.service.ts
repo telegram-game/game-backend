@@ -52,7 +52,6 @@ export class MissionService {
       currentClaimed: 0,
       metaData: metaData,
     }).catch((error) => {
-      console.log(error);
       if (error.code === 'P2002') {
         throw new BusinessException({ status: HttpStatus.BAD_REQUEST, errorCode: 'DUPLICATE_MISSION_CODE', errorMessage: 'Mission code is duplicated' });
       }

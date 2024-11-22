@@ -59,7 +59,7 @@ export class MissionRepository extends BaseRepository {
         },
       },
       include: {
-        userMission: {
+        userMissions: {
           where: {
             userId: userId,
           }

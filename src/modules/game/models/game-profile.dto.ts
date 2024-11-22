@@ -1,6 +1,6 @@
 import { HouseData } from 'src/data/houses';
 import { FullHero } from './hero.model.dto';
-import { GameHouse, Tokens, UserGameProfileAttribute, UserGameProfileAttributes, UserGameProfiles } from '@prisma/client';
+import { GameHouse, GameSeasons, UserGameProfileAttribute, UserGameProfileAttributes, UserGameProfileGameSeason, UserGameProfiles } from '@prisma/client';
 import { IsEnum, IsString } from 'class-validator';
 
 export class FullGameProfile {
@@ -15,10 +15,16 @@ export class FullGameProfile {
     }
   }
   totalLevel: number;
+  currentGameProfileSeason?: {
+    rankPoint: number,
+    updatedAt: Date;
+  };
+  currentGameSeasons?: GameSeasons;
 }
 
 export type FullGameProfileRepositoryModel  = UserGameProfiles & {
   userGameProfileAttributes?: UserGameProfileAttributes[];
+  currentGameProfileSeason?: UserGameProfileGameSeason;
 }
 
 export class ChangeHouseReqeust {

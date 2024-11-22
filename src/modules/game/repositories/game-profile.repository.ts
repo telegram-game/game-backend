@@ -40,6 +40,7 @@ export class GameProfileRepository extends BaseRepository {
 
   async getRandomSameLevelGameProfile(fromLevel: number, toLevel: number, options?: {
     includeAttributes?: boolean;
+    includeGameSeasonId?: string;
   }): Promise<FullGameProfileRepositoryModel> {
     const count = await this.client.userGameProfiles.count({
       where: {
@@ -58,6 +59,7 @@ export class GameProfileRepository extends BaseRepository {
       },
       include: {
         userGameProfileAttributes: options?.includeAttributes,
+        userGameSeasons: !!options?.includeGameSeasonId,
       },
       skip: Math.floor(Math.random() * count),
     }).then((gameProfile) => {
@@ -67,6 +69,7 @@ export class GameProfileRepository extends BaseRepository {
       return {
         ...gameProfile,
         userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
+        currentGameSeason: gameProfile.userGameSeasons?.find((season) => season.id === options?.includeGameSeasonId),
       } as FullGameProfileRepositoryModel;
     });
   }
@@ -74,6 +77,7 @@ export class GameProfileRepository extends BaseRepository {
   async getFirst(userId: string,
     options?: {
       includeAttributes?: boolean;
+      includeGameSeasonId?: string;
     }): Promise<FullGameProfileRepositoryModel> {
     return this.client.userGameProfiles.findFirst({
       where: {
@@ -81,6 +85,7 @@ export class GameProfileRepository extends BaseRepository {
       },
       include: {
         userGameProfileAttributes: options?.includeAttributes,
+        userGameSeasons: !!options?.includeGameSeasonId,
       }
     }).then((gameProfile) => {
       if (!gameProfile) {
@@ -89,6 +94,7 @@ export class GameProfileRepository extends BaseRepository {
       return {
         ...gameProfile,
         userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
+        currentGameProfileSeason: gameProfile.userGameSeasons?.find((season) => season.seasonId === options?.includeGameSeasonId),
       } as FullGameProfileRepositoryModel;
     });
   }

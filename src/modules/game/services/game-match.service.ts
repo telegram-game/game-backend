@@ -42,6 +42,8 @@ export class GameMatchService extends BaseGameMatchService {
 
     return this.start([leftGameProfile.hero], [rightGameProfile.hero], {
       shouldStoreGame: false,
+      leftFullGameProfile: leftGameProfile,
+      rightFullGameProfile: rightGameProfile,
     });
   }
 
@@ -69,6 +71,8 @@ export class GameMatchService extends BaseGameMatchService {
 
     return this.start([leftGameProfile.hero], [rightGameProfile.hero], {
       shouldStoreGame: false,
+      leftFullGameProfile: leftGameProfile,
+      rightFullGameProfile: rightGameProfile,
     });
   }
 
@@ -77,11 +81,15 @@ export class GameMatchService extends BaseGameMatchService {
     rightHeroes: FullHero[],
     options?: {
       shouldStoreGame?: boolean;
+      leftFullGameProfile?: FullGameProfile;
+      rightFullGameProfile?: FullGameProfile;
     },
   ): Promise<GameMatchResult> {
     const gameMatch: FullGameMatch = new FullGameMatch(
       {
         initData: {
+          leftFullGameProfile: options?.leftFullGameProfile as FullGameProfile,
+          rightFullGameProfile: options?.rightFullGameProfile as FullGameProfile,
           leftHeroes: leftHeroes,
           rightHeroes: rightHeroes,
           maximumSteps: 40,

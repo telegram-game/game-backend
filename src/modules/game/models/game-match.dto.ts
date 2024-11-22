@@ -4,6 +4,7 @@ import { HeroAttribute, HeroSkill, UserProvider } from '@prisma/client';
 import { configurationData } from '../../../data';
 import { IsEnum, IsString } from 'class-validator';
 import { AllowedProviders } from 'src/modules/auth/models/auth.dto';
+import { FullGameProfile } from './game-profile.dto';
 
 const skills = configurationData.skills;
 
@@ -232,6 +233,8 @@ export type MinimalistMatchHero = Partial<MatchHero>;
 
 export class GameMatchResult {
   initData: {
+    leftFullProfile?: FullGameProfile;
+    rightFullProfile?: FullGameProfile;
     leftHeroes: FullHero[];
     rightHeroes: FullHero[];
     maximumSteps: number;
@@ -251,6 +254,8 @@ export class GameMatchResult {
 
 export class FullGameMatch {
   readonly initData: {
+    leftFullGameProfile?: FullGameProfile;
+    rightFullGameProfile?: FullGameProfile;
     leftHeroes: FullHero[];
     rightHeroes: FullHero[];
     maximumSteps: number;

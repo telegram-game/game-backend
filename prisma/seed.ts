@@ -9,7 +9,6 @@ import '../src/types/global.type'
 import { randomUUID } from "crypto";
 
 async function main() {
-    console.log(random.first(), random.last());
     const app = await NestFactory.create(appProvider.getAppModule(), {
         cors: true,
         rawBody: true,
@@ -19,6 +18,7 @@ async function main() {
     for (let i = fromLevel; i <= toLevel; i++) {
         for (let j = 0; j < numberOfLevels; j++) {
             try {
+                console.log(`Creating user with level ${i} and pocket ${j} with the current number is ${j} (max ${numberOfLevels})`);
                 const userService = await app.resolve<UserService>(UserService);
                 const gameProfileService = await app.resolve<GameProfileService>(GameProfileService);
 
