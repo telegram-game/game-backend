@@ -14,16 +14,27 @@ export class UserService {
     private prismaService: PrismaService,
   ) {}
 
-  async getById(userId: string, options?: {
-  }): Promise<FullUserRepositoryModel> {
+  async getById(
+    userId: string,
+    options?: {
+      userProfile?: true;
+    },
+  ): Promise<FullUserRepositoryModel> {
     return this.userRepository.getFullById(userId, options);
   }
 
-  async getByProvider(provider: UserProvider, providerId: string): Promise<User> {
+  async getByProvider(
+    provider: UserProvider,
+    providerId: string,
+  ): Promise<User> {
     return this.userRepository.getByProvider(provider, providerId);
   }
 
-  async createOrGetFullByProvider(provider: UserProvider, providerId: string, profile: UserProfileModel): Promise<FullUserModel> {
+  async createOrGetFullByProvider(
+    provider: UserProvider,
+    providerId: string,
+    profile: UserProfileModel,
+  ): Promise<FullUserModel> {
     const user = await this.userRepository.getByProvider(provider, providerId);
     return await this.createOrGetFullById(user?.id, profile);
   }
@@ -32,9 +43,11 @@ export class UserService {
     userId: string,
     profile: UserProfileModel,
   ): Promise<FullUserModel> {
-    const user = userId ? await this.userRepository.getFullById(userId, {
-      userProfile: true,
-    }): null;
+    const user = userId
+      ? await this.userRepository.getFullById(userId, {
+          userProfile: true,
+        })
+      : null;
     if (user) {
       return {
         ...user,

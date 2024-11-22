@@ -25,4 +25,7 @@ export interface Configuration {
   jwtRefreshtokenPrivateKey?: string;
   jwtRefreshtokenPublicKey?: string;
   telegramBotToken: string;
+
+  // Game settings
+  isStoreMatchMetaData: boolean;
 }

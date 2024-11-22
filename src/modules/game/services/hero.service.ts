@@ -60,40 +60,44 @@ export class HeroService extends BaseHeroService {
     let heroId = fullHero?.id;
 
     const repositories = [this.heroRepository, this.heroSkillRepository];
-    await this.prismaService
-      .transaction(async () => {
-        // Add hero
-        const hero = await this.heroRepository.createDefault(
-          userId,
-          userGameProfile.id,
-        );
-        heroId = hero.id;
+    await this.prismaService.transaction(async () => {
+      // Add hero
+      const hero = await this.heroRepository.createDefault(
+        userId,
+        userGameProfile.id,
+      );
+      heroId = hero.id;
 
-        // Add skill
-        await this.heroSkillRepository.create({
-          userId,
-          userGameHeroId: hero.id,
-          skill: this.defaultSkill,
-        });
-
-      }, repositories);
+      // Add skill
+      await this.heroSkillRepository.create({
+        userId,
+        userGameHeroId: hero.id,
+        skill: this.defaultSkill,
+      });
+    }, repositories);
 
     // This is for the first free item. We can ignore the error here
     //Add first free item
     if (!fullHero) {
-      const inventory = await this.inventoryService.openChest(this.defaultFreeItemChestCode, userId, userGameProfile.id).catch((error) => {
-        this.logger.error('Error while opening first free item', error);
-        return null;
-      });
+      const inventory = await this.inventoryService
+        .openChest(this.defaultFreeItemChestCode, userId, userGameProfile.id, {
+          ignoreCost: true,
+        })
+        .catch((error) => {
+          this.logger.error('Error while opening first free item', error);
+          return null;
+        });
       if (inventory) {
         // Equip the item
-        await this.heroItemService.equip(userId, {
-          heroId: heroId,
-          inventoryId: inventory.id,
-          gameProfileId: userGameProfile.id,
-        }).catch((error) => {
-          this.logger.error('Error while equipping first free item', error);
-        });
+        await this.heroItemService
+          .equip(userId, {
+            heroId: heroId,
+            inventoryId: inventory.id,
+            gameProfileId: userGameProfile.id,
+          })
+          .catch((error) => {
+            this.logger.error('Error while equipping first free item', error);
+          });
       }
     }
 

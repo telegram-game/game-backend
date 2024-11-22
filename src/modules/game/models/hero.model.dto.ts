@@ -1,5 +1,5 @@
 import {
-  UserGameHeros,
+  UserGameHeroes,
   UserGameHeroAttributes,
   UserGameHeroSkills,
   UserGameHeroItems,
@@ -32,26 +32,27 @@ export type HeroAttributeType = {
   lifeSteal: HeroAttributeValue;
   reflect: HeroAttributeValue;
   hpRegen: HeroAttributeValue;
-}
+};
 
 export type FullHeroAttributeValue = {
   main: HeroAttributeValue;
   base: HeroAttributeValue;
   additional: HeroAttributeValue;
-}
+};
 
-export type FullHero = UserGameHeros &
-  UserGameProfiles & HeroAttributeType & {
+export type FullHero = UserGameHeroes &
+  UserGameProfiles &
+  HeroAttributeType & {
     metaData?: {
-      base: HeroAttributeType
-      additional: HeroAttributeType
-    }
+      base: HeroAttributeType;
+      additional: HeroAttributeType;
+    };
 
     skill: HeroSkill;
     items: FullInventoryRepositoryModel[];
   };
 
-export type FullHeroRepositoryModel = UserGameHeros & {
+export type FullHeroRepositoryModel = UserGameHeroes & {
   userGameProfile: UserGameProfiles;
   userGameHeroAttributes: UserGameHeroAttributes[];
   userGameHeroItems: UserGameHeroItems[];

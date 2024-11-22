@@ -10,11 +10,15 @@ import { CheckinRepository } from './repositories/checkin.repository';
 import { CheckinService } from './services/checkin.service';
 @Module({
   imports: [PrismaModule],
-  controllers: [InternalMissionController, MissionController, CheckinController],
+  controllers: [
+    InternalMissionController,
+    MissionController,
+    CheckinController,
+  ],
   providers: [
     MissionRepository,
     UserMissionRepository,
-    CheckinRepository, 
+    CheckinRepository,
     MissionService,
     CheckinService,
   ],

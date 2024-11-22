@@ -26,10 +26,19 @@ export class UserBalanceService {
     return await this.userBalanceRepository.gets(userId);
   }
 
-  async decreaseBalance(userId: string, token: Tokens, amount: number, metaData: any): Promise<number> {
-    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+  async decreaseBalance(
+    userId: string,
+    token: Tokens,
+    amount: number,
+    metaData: any,
+  ): Promise<number> {
+    const repositories = [
+      this.userBalanceRepository,
+      this.userBalanceHistoryRepisitory,
+      this.userTokenClaimRepository,
+    ];
     return await this.prismaService.transaction(async () => {
-      let balance = await this.userBalanceRepository.get(userId, token);
+      const balance = await this.userBalanceRepository.get(userId, token);
 
       const currentBalance = balance.balance;
       const lastBalance = currentBalance - amount;
@@ -40,7 +49,7 @@ export class UserBalanceService {
           errorMessage: 'Insufficient balance',
         });
       }
-      
+
       await this.userBalanceRepository.updateOptimistic(
         {
           userId,
@@ -62,14 +71,23 @@ export class UserBalanceService {
     }, repositories);
   }
 
-  async increaseBalance(userId: string, token: Tokens, amount: number, metaData: any): Promise<number> {
-    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+  async increaseBalance(
+    userId: string,
+    token: Tokens,
+    amount: number,
+    metaData: any,
+  ): Promise<number> {
+    const repositories = [
+      this.userBalanceRepository,
+      this.userBalanceHistoryRepisitory,
+      this.userTokenClaimRepository,
+    ];
     return await this.prismaService.transaction(async () => {
-      let balance = await this.userBalanceRepository.get(userId, token);
+      const balance = await this.userBalanceRepository.get(userId, token);
 
       const currentBalance = balance?.balance || 0;
       const lastBalance = currentBalance + amount;
-      
+
       if (!balance) {
         await this.userBalanceRepository.create({
           userId,
@@ -137,7 +155,11 @@ export class UserBalanceService {
     }
 
     const calculatedToken = speed * totalTimeInSeconds;
-    const repositories = [this.userBalanceRepository, this.userBalanceHistoryRepisitory, this.userTokenClaimRepository];
+    const repositories = [
+      this.userBalanceRepository,
+      this.userBalanceHistoryRepisitory,
+      this.userTokenClaimRepository,
+    ];
     return await this.prismaService.transaction(async () => {
       let currentBalance = 0;
       let lastBalance = 0;

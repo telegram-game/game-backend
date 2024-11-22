@@ -7,7 +7,11 @@ import {
 import { BusinessException } from 'src/exceptions';
 import { FullInventoryRepositoryModel } from '../models/inventory.model.dto';
 import { configurationData } from '../../../data/index';
-import { HeroAttribute, HeroSkill, UserGameProfileAttribute } from '@prisma/client';
+import {
+  HeroAttribute,
+  HeroSkill,
+  UserGameProfileAttribute,
+} from '@prisma/client';
 import { FullGameProfileRepositoryModel } from '../models/game-profile.dto';
 
 const houseData = configurationData.houses;
@@ -40,7 +44,11 @@ export class BaseHeroService {
   protected readonly maximumEvasion = 90;
   protected readonly defaultFreeItemChestCode = 'FIRE_SWORD_L1';
 
-  private increaseByPercent(value: number, percent: number, max?: number): number {
+  private increaseByPercent(
+    value: number,
+    percent: number,
+    max?: number,
+  ): number {
     const increase = Math.floor(value * (percent / 100));
     const newValue = value + increase;
     return max ? Math.min(newValue, max) : newValue;
@@ -60,19 +68,34 @@ export class BaseHeroService {
       });
     }
 
-    const pocketAttribute = userGameProfile.userGameProfileAttributes?.find(att => att.attribute === UserGameProfileAttribute.POCKET);
-    const salaryAttribute = userGameProfile.userGameProfileAttributes?.find(att => att.attribute === UserGameProfileAttribute.SALARY);
+    const pocketAttribute = userGameProfile.userGameProfileAttributes?.find(
+      (att) => att.attribute === UserGameProfileAttribute.POCKET,
+    );
+    const salaryAttribute = userGameProfile.userGameProfileAttributes?.find(
+      (att) => att.attribute === UserGameProfileAttribute.SALARY,
+    );
     const pocket = pocketAttribute ? pocketAttribute.value : 1;
     const salary = salaryAttribute ? salaryAttribute.value : 1;
     const increasePercent = pocket * 10 + salary * 10; // total percents
 
-    const baseHouseAttack =
-      this.increaseByPercent(systemData.baseAttackByLevel[house.attributes.attackLevel], increasePercent);
-    const baseHouseHp = this.increaseByPercent(systemData.baseHpByLevel[house.attributes.hpLevel], increasePercent);
-    const baseHouseEvasion =
-      this.increaseByPercent(systemData.baseEvasionByLevel[house.attributes.luckLevel], increasePercent, this.maximumEvasion);
-    const baseHouseCritRate =
-      this.increaseByPercent(systemData.baseCritRateByLevel[house.attributes.luckLevel], increasePercent, this.maximumCritRate);
+    const baseHouseAttack = this.increaseByPercent(
+      systemData.baseAttackByLevel[house.attributes.attackLevel],
+      increasePercent,
+    );
+    const baseHouseHp = this.increaseByPercent(
+      systemData.baseHpByLevel[house.attributes.hpLevel],
+      increasePercent,
+    );
+    const baseHouseEvasion = this.increaseByPercent(
+      systemData.baseEvasionByLevel[house.attributes.luckLevel],
+      increasePercent,
+      this.maximumEvasion,
+    );
+    const baseHouseCritRate = this.increaseByPercent(
+      systemData.baseCritRateByLevel[house.attributes.luckLevel],
+      increasePercent,
+      this.maximumCritRate,
+    );
     const baseHouseCritDamage =
       systemData.baseCritDamageByLevel[this.defaultCritDamegeLevel];
 
@@ -86,17 +109,18 @@ export class BaseHeroService {
       inventories.find((i) => i.id === itemInventoryId),
     );
 
-    const attack = this.buildHeroAttack(baseHouseAttack, inventoryItems)
-    const hp = this.buildHeroHP(baseHouseHp, inventoryItems)
+    const attack = this.buildHeroAttack(baseHouseAttack, inventoryItems);
+    const hp = this.buildHeroHP(baseHouseHp, inventoryItems);
     const evasion = this.buildEvasion(baseHouseEvasion, inventoryItems);
     const critRate = this.buildCritRate(baseHouseCritRate, inventoryItems);
-    const critDamage = this.buildCritDamge(baseHouseCritDamage, inventoryItems)
+    const critDamage = this.buildCritDamge(baseHouseCritDamage, inventoryItems);
     const lifeSteal = this.buildLifeSteal(skillData, inventoryItems);
     const reflect = this.buildReflect(skillData, inventoryItems);
     const hpRegen = this.buildHPRegen(skillData, inventoryItems);
 
     return {
       id: hero.id,
+      userId: hero.userId,
       attack: attack.main,
       hp: hp.main,
       evasion: evasion.main,
@@ -145,26 +169,29 @@ export class BaseHeroService {
       point: baseHouseAttack,
     });
 
-    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.attackAttributes.includes(attribute.attribute)) {
-          // Main
-          main.point += attribute.value.point || 0;
-          main.percent += attribute.value.percent || 0;
+    const additional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.attackAttributes.includes(attribute.attribute)) {
+            // Main
+            main.point += attribute.value.point || 0;
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.point += attribute.value.point || 0;
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.point += attribute.value.point || 0;
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional,
-    }
+    };
   }
 
   protected buildHeroHP(
@@ -179,26 +206,29 @@ export class BaseHeroService {
       point: baseHouseHp,
     });
 
-    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.hpAttributes.includes(attribute.attribute)) {
-          // Main 
-          main.point += attribute.value.point || 0;
-          main.percent += attribute.value.percent || 0;
+    const additional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.hpAttributes.includes(attribute.attribute)) {
+            // Main
+            main.point += attribute.value.point || 0;
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.point += attribute.value.point || 0;
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.point += attribute.value.point || 0;
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional,
-    }
+    };
   }
 
   protected buildEvasion(
@@ -213,18 +243,21 @@ export class BaseHeroService {
       percent: baseHouseEvasion,
     });
 
-    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.evasionAttributes.includes(attribute.attribute)) {
-          // Main
-          main.percent += attribute.value.percent || 0;
+    const additional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.evasionAttributes.includes(attribute.attribute)) {
+            // Main
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     if (base.percent > this.maximumCritRate) {
       base.percent = this.maximumCritRate;
@@ -240,7 +273,7 @@ export class BaseHeroService {
       main,
       base,
       additional,
-    }
+    };
   }
 
   protected buildCritRate(
@@ -255,18 +288,21 @@ export class BaseHeroService {
       percent: baseHouseCritRate,
     });
 
-    const additional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.critRateAttributes.includes(attribute.attribute)) {
-          // Main
-          main.percent += attribute.value.percent || 0;
+    const additional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.critRateAttributes.includes(attribute.attribute)) {
+            // Main
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     if (base.percent > this.maximumCritRate) {
       base.percent = this.maximumCritRate;
@@ -282,7 +318,7 @@ export class BaseHeroService {
       main,
       base,
       additional,
-    }
+    };
   }
 
   protected buildCritDamge(
@@ -297,24 +333,27 @@ export class BaseHeroService {
       percent: baseHouseCritDamage,
     });
 
-    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.critRateAttributes.includes(attribute.attribute)) {
-          // Main
-          main.percent += attribute.value.percent || 0;
+    const addtional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.critRateAttributes.includes(attribute.attribute)) {
+            // Main
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional: addtional,
-    }
+    };
   }
 
   protected buildLifeSteal(
@@ -328,31 +367,32 @@ export class BaseHeroService {
     // Skill is the base
     if (this.lifeStealSkills.includes(skillData.code)) {
       base.point = skillData.attributes[HeroAttribute.LIFE_STEAL].point;
-      base.percent =
-        skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
+      base.percent = skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
       main.point = skillData.attributes[HeroAttribute.LIFE_STEAL].point;
-      main.percent =
-        skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
+      main.percent = skillData.attributes[HeroAttribute.LIFE_STEAL].percent;
     }
 
-    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.lifeStealAttributes.includes(attribute.attribute)) {
-          // Main
-          main.point += attribute.value.point || 0;
+    const addtional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.lifeStealAttributes.includes(attribute.attribute)) {
+            // Main
+            main.point += attribute.value.point || 0;
 
-          // Additional
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional: addtional,
-    }
+    };
   }
 
   protected buildReflect(
@@ -364,32 +404,34 @@ export class BaseHeroService {
 
     if (this.reflectSkills.includes(skillData.code)) {
       base.point = skillData.attributes[HeroAttribute.REFLECT].point;
-      base.percent =
-        skillData.attributes[HeroAttribute.REFLECT].percent;
+      base.percent = skillData.attributes[HeroAttribute.REFLECT].percent;
       main.point = skillData.attributes[HeroAttribute.REFLECT].point;
       main.percent = skillData.attributes[HeroAttribute.REFLECT];
     }
 
-    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.reflectAttributes.includes(attribute.attribute)) {
-          // Main
-          main.point += attribute.value.point || 0;
-          main.percent += attribute.value.percent || 0;
+    const addtional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.reflectAttributes.includes(attribute.attribute)) {
+            // Main
+            main.point += attribute.value.point || 0;
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.point += attribute.value.point || 0;
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.point += attribute.value.point || 0;
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional: addtional,
-    }
+    };
   }
 
   protected buildHPRegen(
@@ -401,31 +443,33 @@ export class BaseHeroService {
 
     if (this.hpRegenSkills.includes(skillData.code)) {
       base.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
-      base.percent =
-        skillData.attributes[HeroAttribute.HP_REGEN].percent;
+      base.percent = skillData.attributes[HeroAttribute.HP_REGEN].percent;
       main.point = skillData.attributes[HeroAttribute.HP_REGEN].point;
       main.percent = skillData.attributes[HeroAttribute.HP_REGEN];
     }
 
-    const addtional = inventoryItems.reduce((attributeValue: HeroAttributeValue, item) => {
-      for (const attribute of item.userGameInventoryAttributes) {
-        if (this.hpRegenAttributes.includes(attribute.attribute)) {
-          // Main
-          main.point += attribute.value.point || 0;
-          main.percent += attribute.value.percent || 0;
+    const addtional = inventoryItems.reduce(
+      (attributeValue: HeroAttributeValue, item) => {
+        for (const attribute of item.userGameInventoryAttributes) {
+          if (this.hpRegenAttributes.includes(attribute.attribute)) {
+            // Main
+            main.point += attribute.value.point || 0;
+            main.percent += attribute.value.percent || 0;
 
-          // Additional
-          attributeValue.point += attribute.value.point || 0;
-          attributeValue.percent += attribute.value.percent || 0;
+            // Additional
+            attributeValue.point += attribute.value.point || 0;
+            attributeValue.percent += attribute.value.percent || 0;
+          }
         }
-      }
-      return attributeValue;
-    }, new HeroAttributeValue());
+        return attributeValue;
+      },
+      new HeroAttributeValue(),
+    );
 
     return {
       main,
       base,
       additional: addtional,
-    }
+    };
   }
 }

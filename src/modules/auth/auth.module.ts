@@ -11,7 +11,14 @@ import { UserReferralController } from './controllers/user-referral.controller';
 @Module({
   imports: [PrismaModule],
   controllers: [AuthController, UserReferralController],
-  providers: [UserProfileRepository, UserRepository, UserReferralRepository, AuthService, UserService, UserReferralService],
+  providers: [
+    UserProfileRepository,
+    UserRepository,
+    UserReferralRepository,
+    AuthService,
+    UserService,
+    UserReferralService,
+  ],
   exports: [UserService],
 })
 export class AuthModule {}

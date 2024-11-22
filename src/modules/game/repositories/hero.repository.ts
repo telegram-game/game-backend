@@ -2,7 +2,7 @@ import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma';
 import { BaseRepository } from 'src/modules/prisma/base/base.repository';
 import { FullHeroRepositoryModel } from '../models/hero.model.dto';
-import { UserGameHeros } from '@prisma/client';
+import { UserGameHeroes } from '@prisma/client';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -17,7 +17,7 @@ export class HeroRepository extends BaseRepository {
     userGameProfileId: string,
     heroId: string,
   ): Promise<FullHeroRepositoryModel> {
-    return this.client.userGameHeros.findFirst({
+    return this.client.userGameHeroes.findFirst({
       where: {
         id: heroId,
         userId,
@@ -36,7 +36,7 @@ export class HeroRepository extends BaseRepository {
     userId: string,
     userGameProfileId: string,
   ): Promise<FullHeroRepositoryModel> {
-    return this.client.userGameHeros.findFirst({
+    return this.client.userGameHeroes.findFirst({
       where: {
         userId,
         userGameProfileId: userGameProfileId,
@@ -53,8 +53,8 @@ export class HeroRepository extends BaseRepository {
   async getFirst(
     userId: string,
     userGameProfileId: string,
-  ): Promise<UserGameHeros> {
-    return this.client.userGameHeros.findFirst({
+  ): Promise<UserGameHeroes> {
+    return this.client.userGameHeroes.findFirst({
       where: {
         userId,
         userGameProfileId: userGameProfileId,
@@ -65,8 +65,8 @@ export class HeroRepository extends BaseRepository {
   async createDefault(
     userId: string,
     userGameProfileId: string,
-  ): Promise<UserGameHeros> {
-    return this.client.userGameHeros.create({
+  ): Promise<UserGameHeroes> {
+    return this.client.userGameHeroes.create({
       data: {
         userId,
         userGameProfileId,

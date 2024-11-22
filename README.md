@@ -83,6 +83,7 @@ $ yarn install --frozen-lockfile
 # How to create/ apply new migration
 ## Create new migration
 ```
+$ set -o allexport && source .env
 $ ./migration.sh <migration_name>
 ```
 ## Apply the migration

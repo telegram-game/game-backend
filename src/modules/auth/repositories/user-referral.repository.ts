@@ -25,17 +25,17 @@ export class UserReferralRepository extends BaseRepository {
         referredUser: {
           include: {
             userProfile: true,
-          }
-        }
+          },
+        },
       },
       take: limit,
       skip: (page - 1) * limit,
     });
 
     return {
-      total, 
+      total,
       data,
-    }
+    };
   }
 
   async create(data: Partial<UserReferrals>): Promise<UserReferrals> {

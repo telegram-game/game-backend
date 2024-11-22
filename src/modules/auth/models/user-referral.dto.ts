@@ -15,5 +15,4 @@ export class GetReferralPagingData {
   lastName: string;
 }
 
-export class GetReferralPagingResponse extends PagingResponse<GetReferralPagingData> {
-}
+export class GetReferralPagingResponse extends PagingResponse<GetReferralPagingData> {}

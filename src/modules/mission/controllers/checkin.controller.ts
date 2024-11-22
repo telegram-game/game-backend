@@ -1,7 +1,11 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import asyncLocalStorage from 'src/storage/async_local';
 import { CheckinService } from '../services/checkin.service';
-import { CheckinDataReponse, ClaimCheckinRequest, GetCheckinRequest } from '../models/checkin';
+import {
+  CheckinDataReponse,
+  ClaimCheckinRequest,
+  GetCheckinRequest,
+} from '../models/checkin';
 
 @Controller({
   path: ['/api/v1.0/checkins'],

@@ -56,8 +56,13 @@ export class CoreExceptionFilter implements ExceptionFilter {
 
     this.setResponseStatus(response, exception, errorCode);
 
-    const errorTitle = this.getErrorTitle(errorCode, request);
-    const errorDetail = this.getErrorDetail(errorCode, errorMessage, request);
+    // const errorTitle = this.getErrorTitle(errorCode, request);
+    // const errorDetail = this.getErrorDetail(errorCode, errorMessage, request);
+    const errorTitle = errorCode;
+    const errorDetail =
+      errorCode === 'INTERNAL_SERVER_ERROR'
+        ? 'Internal server error'
+        : errorMessage;
 
     const errorResponse = new ErrorResponse({
       timestamp: request.context?.requestTimestamp,

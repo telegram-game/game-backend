@@ -29,5 +29,7 @@ export default (): Configuration => {
     jwtRefreshtokenPrivateKey: process.env.JWT_REFRESH_TOKEN_PRIVATE_KEY,
     jwtRefreshtokenPublicKey: process.env.JWT_REFRESH_TOKEN_PUBLIC_KEY,
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    isStoreMatchMetaData:
+      (process.env.IS_STORE_MATCH_METADATA || 'false') === 'true',
   };
 };

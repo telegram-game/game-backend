@@ -12,9 +12,12 @@ export class UserRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async getFullById(userId: string, options?: {
-    userProfile?: true,
-  }): Promise<FullUserRepositoryModel> {
+  async getFullById(
+    userId: string,
+    options?: {
+      userProfile?: true;
+    },
+  ): Promise<FullUserRepositoryModel> {
     return this.client.user.findFirst({
       where: {
         id: userId,
@@ -25,13 +28,16 @@ export class UserRepository extends BaseRepository {
     });
   }
 
-  async getByProvider(provider: UserProvider, providerId: string): Promise<User> {
+  async getByProvider(
+    provider: UserProvider,
+    providerId: string,
+  ): Promise<User> {
     return this.client.user.findUnique({
       where: {
         provider_providerId: {
           provider,
           providerId,
-        }
+        },
       },
     });
   }

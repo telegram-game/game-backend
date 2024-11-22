@@ -5,7 +5,8 @@ import { BaseRepository } from '../base/base.repository';
 
 export class PrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy {
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor() {
     super();
   }
@@ -34,18 +35,28 @@ export class PrismaService
     throw new Error('Method $disconnect is not available in PrismaService');
   }
 
-  async transaction<R>(fn: (tx: PrismaClient) => Promise<R>, repositories?: BaseRepository[], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<R> {
+  async transaction<R>(
+    fn: (tx: PrismaClient) => Promise<R>,
+    repositories?: BaseRepository[],
+    options?: {
+      maxWait?: number;
+      timeout?: number;
+      isolationLevel?: Prisma.TransactionIsolationLevel;
+    },
+  ): Promise<R> {
     repositories = repositories || [];
-    return await super.$transaction(async (tx: PrismaClient) => {
-      for (let repository of repositories) {
-        repository.joinTransaction(tx);
-      }
-      return await fn(tx);
-    }, options).finally(() => {
-      for (let repository of repositories) {
-        repository.leftTransaction();
-      }
-    })
+    return await super
+      .$transaction(async (tx: PrismaClient) => {
+        for (const repository of repositories) {
+          repository.joinTransaction(tx);
+        }
+        return await fn(tx);
+      }, options)
+      .finally(() => {
+        for (const repository of repositories) {
+          repository.leftTransaction();
+        }
+      });
   }
 }
 

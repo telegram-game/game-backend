@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GameSeasons } from '@prisma/client';
-import { configurationData } from '../../../data';
 import { GameSeasonRepository } from '../repositories/game-season.repository';
-
-const houseData = configurationData.houses;
-const skills = configurationData.skills;
 
 // Should store in Redis
 // For now, just cache in memory for 1 hour
@@ -13,11 +9,9 @@ let expireAt: number = 0;
 
 @Injectable()
 export class GameSeasonService {
-  constructor(
-    private readonly gameSeasonRepository: GameSeasonRepository,
-  ) { }
+  constructor(private readonly gameSeasonRepository: GameSeasonRepository) {}
 
-  async getFirstActive( ): Promise<GameSeasons> {
+  async getFirstActive(): Promise<GameSeasons> {
     if (currentSeason && expireAt > Date.now()) {
       return currentSeason;
     }

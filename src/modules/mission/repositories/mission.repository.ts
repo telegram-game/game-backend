@@ -31,19 +31,19 @@ export class MissionRepository extends BaseRepository {
         totalBudget: {
           gt: this.client.missions.fields.currentClaimed,
         },
-      }
+      },
     });
   }
 
-  async create(
-    data: Partial<Missions>,
-  ): Promise<Missions> {
+  async create(data: Partial<Missions>): Promise<Missions> {
     return this.client.missions.create({
       data: data as Missions,
     });
   }
 
-  async getsSatifiedByUserId(userId: string): Promise<FullMissionRepositoryModel[]> {
+  async getsSatifiedByUserId(
+    userId: string,
+  ): Promise<FullMissionRepositoryModel[]> {
     const now = new Date();
     return this.client.missions.findMany({
       where: {
@@ -62,13 +62,16 @@ export class MissionRepository extends BaseRepository {
         userMissions: {
           where: {
             userId: userId,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 
-  async updateCurrentTotalClaimedWithSatifyCondition(id: string, claimAmount: number): Promise<Missions> {
+  async updateCurrentTotalClaimedWithSatifyCondition(
+    id: string,
+    claimAmount: number,
+  ): Promise<Missions> {
     const now = new Date();
     return this.client.missions.update({
       where: {
@@ -88,7 +91,7 @@ export class MissionRepository extends BaseRepository {
         currentClaimed: {
           increment: claimAmount,
         },
-      }
+      },
     });
   }
 
@@ -99,11 +102,11 @@ export class MissionRepository extends BaseRepository {
         status: MissionStatus.ACTIVE,
         totalBudget: {
           lte: this.client.missions.fields.currentClaimed,
-        }
+        },
       },
       data: {
         status: MissionStatus.ENOUGH_BUDGET,
-      }
+      },
     });
   }
 }

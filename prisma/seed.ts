@@ -8,6 +8,11 @@ import { UserGameProfileAttribute, UserProvider } from "@prisma/client";
 import '../src/types/global.type'
 import { randomUUID } from "crypto";
 
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+
+dayjs.extend(utc);
+
 async function main() {
     const app = await NestFactory.create(appProvider.getAppModule(), {
         cors: true,

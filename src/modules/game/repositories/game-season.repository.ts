@@ -16,6 +16,6 @@ export class GameSeasonRepository extends BaseRepository {
       where: {
         status: SeasonStatus.ACTIVE,
       },
-    })
+    });
   }
 }

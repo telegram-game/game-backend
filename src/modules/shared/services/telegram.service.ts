@@ -15,7 +15,8 @@ export class TelegramService {
 
   verify(code: string): TelegramDataUserModel {
     const initData = new URLSearchParams(code);
-    const verified = this.env === Environment.Local ? true : this.verifyTelegranData(initData);
+    const verified =
+      this.env === Environment.Local ? true : this.verifyTelegranData(initData);
     if (verified) {
       return JSON.parse(initData.get('user')) as TelegramDataUserModel;
     }
@@ -25,11 +26,16 @@ export class TelegramService {
   private verifyTelegranData(initData: URLSearchParams): boolean {
     const hash = initData.get('hash');
     const dataToCheck = [];
-    initData.sort()
-    initData.forEach((val: any, key: string) => key !== 'hash' && dataToCheck.push(`${key}=${val}`));
+    initData.sort();
+    initData.forEach(
+      (val: any, key: string) =>
+        key !== 'hash' && dataToCheck.push(`${key}=${val}`),
+    );
 
     const secret = cryptoJS.HmacSHA256(this.telegramBotToken, 'WebAppData');
-    const hashed = cryptoJS.HmacSHA256(dataToCheck.join('\n'), secret).toString(cryptoJS.enc.Hex);
+    const hashed = cryptoJS
+      .HmacSHA256(dataToCheck.join('\n'), secret)
+      .toString(cryptoJS.enc.Hex);
     return hash === hashed;
   }
 }

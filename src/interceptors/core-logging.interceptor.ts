@@ -46,8 +46,9 @@ export class LoggingInterceptor implements NestInterceptor {
         const executionTime = Math.round(
           new Date().getTime() - requestContext.requestTimestamp,
         );
+
         this.logger.error(
-          `Exception  [${requestContext.cid}] - [${err.status ?? HttpStatus.INTERNAL_SERVER_ERROR}]: ${err.message}`,
+          `Exception  [${requestContext.cid}] - [${err.status ?? HttpStatus.INTERNAL_SERVER_ERROR}]: ${err.message ?? err.errorMessage}`,
           err.stack,
           LoggingInterceptor.name,
           {

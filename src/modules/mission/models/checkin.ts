@@ -1,17 +1,17 @@
-import { UserGameProfileDailyCheckins } from "@prisma/client";
-import { IsString } from "class-validator";
+import { UserGameProfileDailyCheckins } from '@prisma/client';
+import { IsString } from 'class-validator';
 
 export class GetCheckinRequest {
-    @IsString()
-    gameProfileId: string;
+  @IsString()
+  gameProfileId: string;
 }
 
 export class ClaimCheckinRequest {
-    @IsString()
-    gameProfileId: string;
+  @IsString()
+  gameProfileId: string;
 }
 
 export class CheckinDataReponse {
-    currentStack: number;
-    data: UserGameProfileDailyCheckins[];
+  currentStack: number;
+  data: UserGameProfileDailyCheckins[];
 }

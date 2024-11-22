@@ -11,9 +11,13 @@ export class CheckinRepository extends BaseRepository {
     super(prismaService);
   }
 
-  async gets(userId: string, gameProfileId: string, options?: {
-    limit?: number;
-  }): Promise<UserGameProfileDailyCheckins[]> {
+  async gets(
+    userId: string,
+    gameProfileId: string,
+    options?: {
+      limit?: number;
+    },
+  ): Promise<UserGameProfileDailyCheckins[]> {
     return this.client.userGameProfileDailyCheckins.findMany({
       where: {
         userId,
@@ -22,7 +26,7 @@ export class CheckinRepository extends BaseRepository {
       take: options?.limit,
       orderBy: {
         checkinCode: 'desc',
-      }
+      },
     });
   }
 

@@ -37,15 +37,15 @@ export class SystemConfigData {
       baseCost: number;
       multiplier: number;
       token: Tokens;
-    }
-  }
+    };
+  };
   referralCampaign?: {
     userReward: number;
     premiumUserReward: number;
     referrerReward: number;
     premiumReferrerReward: number;
     rewardToken: Tokens;
-  }
+  };
   checkinCampaign?: CheckinCampaign;
 }
 

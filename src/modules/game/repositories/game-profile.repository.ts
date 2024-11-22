@@ -17,86 +17,107 @@ export class GameProfileRepository extends BaseRepository {
     gameProfileId?: string,
     options?: {
       includeAttributes?: boolean;
-    }
+    },
   ): Promise<FullGameProfileRepositoryModel> {
-    return this.client.userGameProfiles.findFirst({
-      where: {
-        userId,
-        id: gameProfileId,
-      },
-      include: {
-        userGameProfileAttributes: options?.includeAttributes,
-      }
-    }).then((gameProfile) => {
-      if (!gameProfile) {
-        return null;
-      }
-      return {
-        ...gameProfile,
-        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
-      } as FullGameProfileRepositoryModel;
-    });
+    return this.client.userGameProfiles
+      .findFirst({
+        where: {
+          userId,
+          id: gameProfileId,
+        },
+        include: {
+          userGameProfileAttributes: options?.includeAttributes,
+        },
+      })
+      .then((gameProfile) => {
+        if (!gameProfile) {
+          return null;
+        }
+        return {
+          ...gameProfile,
+          userGameProfileAttributes:
+            gameProfile.userGameProfileAttributes ?? [],
+        } as FullGameProfileRepositoryModel;
+      });
   }
 
-  async getRandomSameLevelGameProfile(fromLevel: number, toLevel: number, options?: {
-    includeAttributes?: boolean;
-    includeGameSeasonId?: string;
-  }): Promise<FullGameProfileRepositoryModel> {
-    const count = await this.client.userGameProfiles.count({
-      where: {
-        totalLevel: {
-          gte: fromLevel,
-          lte: toLevel,
-        }
-      }
-    }).then((count) => count);
-    return this.client.userGameProfiles.findFirst({
-      where: {
-        totalLevel: {
-          gte: fromLevel,
-          lte: toLevel,
-        }
-      },
-      include: {
-        userGameProfileAttributes: options?.includeAttributes,
-        userGameSeasons: !!options?.includeGameSeasonId,
-      },
-      skip: Math.floor(Math.random() * count),
-    }).then((gameProfile) => {
-      if (!gameProfile) {
-        return null;
-      }
-      return {
-        ...gameProfile,
-        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
-        currentGameSeason: gameProfile.userGameSeasons?.find((season) => season.id === options?.includeGameSeasonId),
-      } as FullGameProfileRepositoryModel;
-    });
-  }
-
-  async getFirst(userId: string,
+  async getRandomSameLevelGameProfile(
+    fromLevel: number,
+    toLevel: number,
     options?: {
       includeAttributes?: boolean;
       includeGameSeasonId?: string;
-    }): Promise<FullGameProfileRepositoryModel> {
-    return this.client.userGameProfiles.findFirst({
-      where: {
-        userId,
-      },
-      include: {
-        userGameProfileAttributes: options?.includeAttributes,
-        userGameSeasons: !!options?.includeGameSeasonId,
-      }
-    }).then((gameProfile) => {
-      if (!gameProfile) {
-        return null;
-      }
-      return {
-        ...gameProfile,
-        userGameProfileAttributes: gameProfile.userGameProfileAttributes ?? [],
-        currentGameProfileSeason: gameProfile.userGameSeasons?.find((season) => season.seasonId === options?.includeGameSeasonId),
-      } as FullGameProfileRepositoryModel;
-    });
+    },
+  ): Promise<FullGameProfileRepositoryModel> {
+    const count = await this.client.userGameProfiles
+      .count({
+        where: {
+          totalLevel: {
+            gte: fromLevel,
+            lte: toLevel,
+          },
+        },
+      })
+      .then((count) => count);
+    return this.client.userGameProfiles
+      .findFirst({
+        where: {
+          totalLevel: {
+            gte: fromLevel,
+            lte: toLevel,
+          },
+        },
+        include: {
+          userGameProfileAttributes: options?.includeAttributes,
+          userGameSeasons: !!options?.includeGameSeasonId,
+        },
+        skip: Math.floor(Math.random() * count),
+      })
+      .then((gameProfile) => {
+        if (!gameProfile) {
+          return null;
+        }
+        return {
+          ...gameProfile,
+          userGameProfileAttributes:
+            gameProfile.userGameProfileAttributes ?? [],
+          currentGameSeason: gameProfile.userGameSeasons?.find(
+            (season) => season.id === options?.includeGameSeasonId,
+          ),
+        } as FullGameProfileRepositoryModel;
+      });
+  }
+
+  async getFirst(
+    userId: string,
+    options?: {
+      includeAttributes?: boolean;
+      includeGameSeasonId?: string;
+    },
+  ): Promise<FullGameProfileRepositoryModel> {
+    return this.client.userGameProfiles
+      .findFirst({
+        where: {
+          userId,
+        },
+        include: {
+          userGameProfileAttributes: options?.includeAttributes,
+          userGameSeasons: !!options?.includeGameSeasonId,
+        },
+      })
+      .then((gameProfile) => {
+        if (!gameProfile) {
+          return null;
+        }
+        return {
+          ...gameProfile,
+          userGameProfileAttributes:
+            gameProfile.userGameProfileAttributes ?? [],
+          currentGameProfileSeason: gameProfile.userGameSeasons?.find(
+            (season) => season.seasonId === options?.includeGameSeasonId,
+          ),
+        } as FullGameProfileRepositoryModel;
+      });
   }
 
   async create(data: Partial<UserGameProfiles>): Promise<UserGameProfiles> {

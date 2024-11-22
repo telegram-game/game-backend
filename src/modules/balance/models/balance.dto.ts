@@ -9,8 +9,8 @@ export class ClaimRequest {
 export class BalanceInformationResponse {
   balances: {
     [key in Tokens]?: number;
-  }
+  };
   lastClaimedAt: {
     [key in Tokens]?: Date;
-  }
+  };
 }

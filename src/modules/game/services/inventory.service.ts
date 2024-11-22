@@ -1,5 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { ItemCode, ItemType, UserGameInventories } from '@prisma/client';
+import {
+  ItemCode,
+  ItemType,
+  Tokens,
+  UserGameInventories,
+} from '@prisma/client';
 import { InventoryRepository } from '../repositories/inventory.repository';
 import { SupportService } from 'src/modules/shared/services/support.service';
 import { BusinessException } from 'src/exceptions';
@@ -8,11 +13,13 @@ import { InventoryAttributeRepository } from '../repositories/inventory-attribut
 import { BaseInventoryService } from './inventory.base-service';
 import { configurationData } from '../../../data/index';
 import { ItemAttributeData } from 'src/data/items';
+import { BalanceService } from 'src/modules/shared/services/balance.service';
 
 @Injectable()
 export class InventoryService extends BaseInventoryService {
   protected readonly itemData = configurationData.items;
   constructor(
+    private readonly balanceService: BalanceService,
     inventoryRepository: InventoryRepository,
     inventoryAttributeRepository: InventoryAttributeRepository,
     supportService: SupportService,
@@ -34,6 +41,9 @@ export class InventoryService extends BaseInventoryService {
     chestCode: string,
     userId: string,
     gameProfileId: string,
+    options?: {
+      ignoreCost?: boolean;
+    },
   ): Promise<UserGameInventories> {
     const chest = this.itemData.chests[chestCode];
     if (!chest) {
@@ -42,6 +52,41 @@ export class InventoryService extends BaseInventoryService {
         errorCode: 'CHEST_NOT_FOUND',
         errorMessage: 'Chest not found',
       });
+    }
+
+    const cost = options?.ignoreCost ? null : chest.cost;
+    if (cost) {
+      if (cost.isExtenalToken) {
+        throw new BusinessException({
+          status: HttpStatus.BAD_REQUEST,
+          errorCode: 'EXTERNAL_TOKEN_NOT_SUPPORTED_YET',
+          errorMessage: 'External token is not supported yet',
+        });
+      }
+
+      const balance = await this.balanceService.get(
+        userId,
+        cost.token as Tokens,
+      );
+      if (!balance || balance.balance < cost.value) {
+        throw new BusinessException({
+          status: HttpStatus.BAD_REQUEST,
+          errorCode: 'INSUFFICIENT_BALANCE',
+          errorMessage: 'Insufficient balance',
+        });
+      }
+
+      await this.balanceService.decrease(
+        userId,
+        cost.token as Tokens,
+        cost.value,
+        {
+          type: 'buy-item',
+          itemType: 'chest',
+          itemCode: chestCode,
+          buyAt: new Date(),
+        },
+      );
     }
 
     // Random the item
@@ -63,7 +108,10 @@ export class InventoryService extends BaseInventoryService {
         true,
       );
 
-    const repositories = [this.inventoryRepository, this.inventoryAttributeRepository];
+    const repositories = [
+      this.inventoryRepository,
+      this.inventoryAttributeRepository,
+    ];
     return await this.prismaService.transaction(async () => {
       const inventory = await this.inventoryRepository.create({
         userId,
@@ -125,6 +173,6 @@ export class InventoryService extends BaseInventoryService {
       }
 
       return inventory;
-    }, repositories)
+    }, repositories);
   }
 }

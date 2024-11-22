@@ -1,6 +1,12 @@
-import { Missions, Tokens, UserGameProfileDailyCheckins, UserMissions } from '@prisma/client';
+import { Missions, Tokens, UserMissions } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export enum SocialType {
   LOCAL = 'LOCAL',
@@ -12,7 +18,7 @@ export enum SocialType {
 
 export type FullMissionRepositoryModel = Missions & {
   userMissions?: UserMissions[];
-}
+};
 
 export class CreateMissionReqeust {
   @IsString()

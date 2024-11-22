@@ -1,4 +1,4 @@
-import { HeroAttribute, ItemType } from '@prisma/client';
+import { HeroAttribute, ItemType, Tokens } from '@prisma/client';
 import itemData from './item.json';
 import { Star } from '../common/common.model';
 
@@ -17,6 +17,11 @@ export class Chest {
   flexibleItemAttributesCount: number;
   starRates: {
     [key in Star]?: number;
+  };
+  cost?: {
+    token: Tokens | string;
+    value: number;
+    isExtenalToken: boolean;
   };
 }
 

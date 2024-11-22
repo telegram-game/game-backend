@@ -1,0 +1,16 @@
+{
+    "match": {
+        "basePoint": 20,
+        "pointPerDiff100Rank": 1,
+        "maxDiffPoint": 5,
+        "rewardToken": "INGAME_2",
+        "rewardTokenValue": 1
+    },
+    "energy": {
+        "maxEnergy": 20,
+        "claimTimeBlockInSeconds": 10800,
+        "claimEnergyDescription": "Claim 5 energies every 3 hours",
+        "claimEnergyAmount": 5,
+        "defaultInitEnergy": 5  
+    }
+}

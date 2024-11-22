@@ -33,7 +33,11 @@ export class AuthController {
     // temporary solution. Will use data.code as the userId. Profile will be mocked.
     const userData = this.telegramService.verify(data.code);
     if (!userData) {
-      throw new BusinessException({status: HttpStatus.UNAUTHORIZED, errorCode: 'UNAUTHORIZED', errorMessage: 'Unauthorized'});
+      throw new BusinessException({
+        status: HttpStatus.UNAUTHORIZED,
+        errorCode: 'UNAUTHORIZED',
+        errorMessage: 'Unauthorized',
+      });
     }
 
     const profile = {
@@ -44,13 +48,25 @@ export class AuthController {
       email: '',
       avatar: userData.photo_url,
     };
-    const user = await this.userService.createOrGetFullByProvider(profile.provider, profile.providerId, profile);
+    const user = await this.userService.createOrGetFullByProvider(
+      profile.provider,
+      profile.providerId,
+      profile,
+    );
 
     if (user.isNew && data.referralCode) {
       // TODO: Implement referral code logic
-      this.userReferralService.executeReferralCodeLogic(user, data.provider, profile.providerId, data.referralCode, userData.is_premium).catch((err) => {
-        this.logger.error('Error when execute the referral logic', err);
-      });
+      this.userReferralService
+        .executeReferralCodeLogic(
+          user,
+          data.provider,
+          profile.providerId,
+          data.referralCode,
+          userData.is_premium,
+        )
+        .catch((err) => {
+          this.logger.error('Error when execute the referral logic', err);
+        });
     }
 
     return this.authService.generateTokens(user.id, profile);

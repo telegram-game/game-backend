@@ -245,6 +245,7 @@ export class GameMatchResult {
     rightHero: MatchHero;
   };
   winnerHeroId: string; // the heroId
+  winnerUserId: string; // the userId
   progress: ProgressTurn[];
 
   constructor(data?: Partial<GameMatchResult>) {
@@ -327,6 +328,7 @@ export class FullGameMatch {
     }
 
     this.isCompleted = true;
+    const winnerHero = this.getWinnerHero(leftHero, rightHero);
     this.result = new GameMatchResult({
       initData: this.initData,
       totalTurns: currentTurnNumber,
@@ -334,7 +336,8 @@ export class FullGameMatch {
         leftHero: leftHero,
         rightHero: rightHero,
       },
-      winnerHeroId: this.getWinnerHero(leftHero, rightHero).heroData.id,
+      winnerHeroId: winnerHero.heroData.id,
+      winnerUserId: winnerHero.heroData.userId,
       progress: progressTurns,
     });
     return this.result;

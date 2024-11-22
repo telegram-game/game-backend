@@ -11,10 +11,13 @@ export class AuthService {
     };
   }
 
-  async getUserById(userId: string, options?: {
-    userProfile?: true,
-    includeAttributes?: boolean;
-  }): Promise<any> {
+  async getUserById(
+    userId: string,
+    options?: {
+      userProfile?: true;
+      includeAttributes?: boolean;
+    },
+  ): Promise<any> {
     // Should use http module to call external service
     return this.localUserService.getById(userId, options);
   }
