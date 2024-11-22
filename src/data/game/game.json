@@ -1,0 +1,9 @@
+{
+    "match": {
+        "maxEnergy": 20,
+        "claimTimeBlockInSeconds": 10800,
+        "claimEnergyDescription": "Claim 5 energies every 3 hours",
+        "claimEnergyAmount": 5,
+        "defaultInitEnergy": 5
+    }
+}

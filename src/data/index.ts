@@ -1,3 +1,4 @@
+import { game, GameConfigData } from './game';
 import { HouseConfigData, houses } from './houses';
 import { ItemConfigData, items } from './items';
 import { skills, SkillConfigData } from './skills';
@@ -8,6 +9,7 @@ export class ConfigurationData {
   houses: HouseConfigData;
   skills: SkillConfigData;
   system: SystemConfigData;
+  game: GameConfigData;
 }
 
 export const configurationData = {
@@ -15,4 +17,5 @@ export const configurationData = {
   houses,
   skills,
   system,
+  game,
 };

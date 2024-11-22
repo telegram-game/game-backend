@@ -9,12 +9,14 @@ import { BusinessException } from 'src/exceptions';
 import { GameProfileAttributeRepository } from '../repositories/game-profile-attribute.repository';
 import { PrismaService } from 'src/modules/prisma';
 import { GameSeasonService } from './game-seasion.service';
+import { BaseGameMatchService } from './game-match.base-service';
+import { SupportService } from 'src/modules/shared/services/support.service';
 
 const houseData = configurationData.houses;
 const skills = configurationData.skills;
 
 @Injectable()
-export class GameProfileService {
+export class GameProfileService extends BaseGameMatchService {
   private readonly defaultHouse = GameHouse.HAMSTERS;
   constructor(
     private readonly gameProfileRepository: GameProfileRepository,
@@ -23,7 +25,10 @@ export class GameProfileService {
     private readonly heroService: HeroService,
     private readonly gameSeasonService: GameSeasonService,
     private readonly prismaService: PrismaService,
-  ) { }
+    supportService: SupportService,
+  ) {
+    super(supportService);
+   }
 
   async getByIdOrFirst(
     userId: string,
@@ -78,10 +83,7 @@ export class GameProfileService {
       skillData: skills[fullHero.skill],
       hero: fullHero,
       attributes: attributes,
-      currentGameProfileSeason: gameProfile.currentGameProfileSeason || {
-        rankPoint: 0,
-        updatedAt: new Date(),
-      },
+      currentGameProfileSeason: this.getGameProfileSeason(gameProfile.currentGameProfileSeason, gameSeason),
       currentGameSeasons: gameSeason,
     };
   }
@@ -127,10 +129,7 @@ export class GameProfileService {
       skillData: skills[fullHero.skill],
       hero: fullHero,
       attributes: attributes,
-      currentGameProfileSeason: gameProfile.currentGameProfileSeason || {
-        rankPoint: 0,
-        updatedAt: new Date(),
-      },
+      currentGameProfileSeason: this.getGameProfileSeason(gameProfile.currentGameProfileSeason, gameSeason),
       currentGameSeasons: gameSeason,
     };
   }

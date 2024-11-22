@@ -1,25 +1,40 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { FullHero } from '../models/hero.model.dto';
 import { BaseGameMatchService } from './game-match.base-service';
 import { SupportService } from 'src/modules/shared/services/support.service';
-import { FullGameMatch, GameMatchResult } from '../models/game-match.dto';
+import { GameMatchResult } from '../models/game-match.dto';
 import { GameProfileService } from './game-profile.service';
 import { AuthService } from 'src/modules/shared/services/auth.service';
 import { BusinessException } from 'src/exceptions';
 import { FullGameProfile } from '../models/game-profile.dto';
 import { UserProvider } from '@prisma/client';
+import { GameSeasonService } from './game-seasion.service';
+import { UserGameProfileGameSeasonRepository } from '../repositories/user-game-profile-game-season.repository';
 
 @Injectable()
 export class GameMatchService extends BaseGameMatchService {
   constructor(
-    private gameProfileService: GameProfileService,
-    private authService: AuthService,
+    private readonly gameProfileService: GameProfileService,
+    private readonly authService: AuthService,
+    private readonly gameSeasonService: GameSeasonService,
+    private readonly userGameProfileGameSeasonRepository: UserGameProfileGameSeasonRepository,
     supportSerVice: SupportService,
   ) {
     super(supportSerVice);
   }
 
   async fightingRandom(userId: string): Promise<GameMatchResult> {
+    // Check season
+    const gameSeason = await this.gameSeasonService.getFirstActive();
+    if (!gameSeason) {
+      throw new BusinessException({
+        status: HttpStatus.BAD_REQUEST,
+        errorCode: '',
+        errorMessage: 'No active rank season',
+      });
+    }
+
+    const 
+
     const leftGameProfile = await this.gameProfileService.getFullFirst(userId);
     let rightGameProfile: FullGameProfile | null = null;
     let fromLevel = leftGameProfile.totalLevel;
@@ -41,7 +56,6 @@ export class GameMatchService extends BaseGameMatchService {
     }
 
     return this.start([leftGameProfile.hero], [rightGameProfile.hero], {
-      shouldStoreGame: false,
       leftFullGameProfile: leftGameProfile,
       rightFullGameProfile: rightGameProfile,
     });
@@ -69,42 +83,11 @@ export class GameMatchService extends BaseGameMatchService {
     );
     const leftGameProfile = await this.gameProfileService.getFullFirst(userId);
 
-    return this.start([leftGameProfile.hero], [rightGameProfile.hero], {
-      shouldStoreGame: false,
+    const gameMatchResult = this.start([leftGameProfile.hero], [rightGameProfile.hero], {
       leftFullGameProfile: leftGameProfile,
       rightFullGameProfile: rightGameProfile,
     });
-  }
 
-  async start(
-    leftHeroes: FullHero[],
-    rightHeroes: FullHero[],
-    options?: {
-      shouldStoreGame?: boolean;
-      leftFullGameProfile?: FullGameProfile;
-      rightFullGameProfile?: FullGameProfile;
-    },
-  ): Promise<GameMatchResult> {
-    const gameMatch: FullGameMatch = new FullGameMatch(
-      {
-        initData: {
-          leftFullGameProfile: options?.leftFullGameProfile as FullGameProfile,
-          rightFullGameProfile: options?.rightFullGameProfile as FullGameProfile,
-          leftHeroes: leftHeroes,
-          rightHeroes: rightHeroes,
-          maximumSteps: 40,
-        },
-      },
-      this.supportService,
-    );
-
-    const result = gameMatch.run();
-
-    // Store the game match
-    if (options?.shouldStoreGame) {
-      // Store the game match
-    }
-
-    return result;
+    return gameMatchResult;
   }
 }

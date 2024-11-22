@@ -3,6 +3,13 @@ import { FullHero } from './hero.model.dto';
 import { GameHouse, GameSeasons, UserGameProfileAttribute, UserGameProfileAttributes, UserGameProfileGameSeason, UserGameProfiles } from '@prisma/client';
 import { IsEnum, IsString } from 'class-validator';
 
+export class GameProfileSeasonDto {
+  rankPoint: number;
+  energy: number;
+  lastRechargeEnergyAt: Date;
+  updatedAt: Date;
+}
+
 export class FullGameProfile {
   id: string;
   houseData: HouseData;
@@ -15,10 +22,7 @@ export class FullGameProfile {
     }
   }
   totalLevel: number;
-  currentGameProfileSeason?: {
-    rankPoint: number,
-    updatedAt: Date;
-  };
+  currentGameProfileSeason?: GameProfileSeasonDto;
   currentGameSeasons?: GameSeasons;
 }
 

@@ -21,6 +21,7 @@ import { GameProfileAttributeRepository } from './repositories/game-profile-attr
 import { LoggerModule } from '../loggers';
 import { GameSeasonRepository } from './repositories/game-season.repository';
 import { GameSeasonService } from './services/game-seasion.service';
+import { UserGameProfileGameSeasonRepository } from './repositories/user-game-profile-game-season.repository';
 
 @Module({
   imports: [PrismaModule, LoggerModule],
@@ -41,6 +42,7 @@ import { GameSeasonService } from './services/game-seasion.service';
     GameProfileRepository,
     GameProfileAttributeRepository,
     GameSeasonRepository,
+    UserGameProfileGameSeasonRepository,
     InventoryService,
     HeroService,
     GameProfileService,
