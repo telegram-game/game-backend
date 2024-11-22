@@ -20,7 +20,7 @@ declare global {
     }
 
     export interface BalanceHistoryMetadata {
-      type: 'claim' | 'deposit' | 'withdraw' | 'upgrade-attribute' | 'mission-completed' | 'referral-completed';
+      type: 'claim' | 'deposit' | 'withdraw' | 'upgrade-attribute' | 'mission-completed' | 'referral-completed' | 'checkin-completed';
       additionalData: any;
     }
 

@@ -123,6 +123,7 @@ model User {
   userAttributes              UserGameProfileAttributes[]
   userReferrals               UserReferrals[]
   userGameSeason              UserGameProfileGameSeason[]
+  userGameProfileDailyCheckin UserGameProfileDailyCheckins[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -158,18 +159,19 @@ model UserReferrals {
 }
 
 model UserGameProfiles {
-  id                        String                      @id @default(cuid()) @map("id")
-  userId                    String                      @unique @map("user_id")
-  house                     GameHouse                   @map("house")
-  class                     String?                     @map("class")
-  totalLevel                Int                         @default(2) @map("total_power") // The default should be UserGameProfileAttribute length
-  createdAt                 DateTime                    @default(now()) @map("created_at")
-  updatedAt                 DateTime                    @updatedAt @map("updated_at")
-  user                      User                        @relation(fields: [userId], references: [id])
-  userGameHero              UserGameHeros[]
-  userGameInventories       UserGameInventories[]
-  userGameProfileAttributes UserGameProfileAttributes[]
-  userGameSeasons           UserGameProfileGameSeason[]
+  id                          String                        @id @default(cuid()) @map("id")
+  userId                      String                        @unique @map("user_id")
+  house                       GameHouse                     @map("house")
+  class                       String?                       @map("class")
+  totalLevel                  Int                           @default(2) @map("total_power") // The default should be UserGameProfileAttribute length
+  createdAt                   DateTime                      @default(now()) @map("created_at")
+  updatedAt                   DateTime                      @updatedAt @map("updated_at")
+  user                        User                          @relation(fields: [userId], references: [id])
+  userGameHero                UserGameHeros[]
+  userGameInventories         UserGameInventories[]
+  userGameProfileAttributes   UserGameProfileAttributes[]
+  userGameSeasons             UserGameProfileGameSeason[]
+  userGameProfileDailyCheckin UserGameProfileDailyCheckins[]
 
   @@map("user_game_profiles")
 }
@@ -389,4 +391,19 @@ model UserGameProfileGameSeason {
 
   @@unique([userGameProfileId, seasonId])
   @@map("user_game_profile_game_seasons")
+}
+
+model UserGameProfileDailyCheckins {
+  id                String   @id @default(cuid()) @map("id")
+  userId            String   @map("user_id")
+  userGameProfileId String   @map("game_profile_id")
+  checkinCode       String   @map("checkin_code")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user        User             @relation(fields: [userId], references: [id])
+  gameProfile UserGameProfiles @relation(fields: [userGameProfileId], references: [id])
+
+  @@unique([userGameProfileId, checkinCode])
+  @@map("user_game_profile_daily_checkins")
 }

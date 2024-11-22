@@ -64,5 +64,11 @@
         "referrerReward": 20,
         "premiumReferrerReward": 100,
         "rewardToken": "INGAME"
+    },
+    "checkinCampaign": {
+        "reward": 1,
+        "stackCoefficient": 0.2,
+        "maxStack": 7,
+        "rewardToken": "INGAME"
     }
 }

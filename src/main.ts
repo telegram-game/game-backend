@@ -4,6 +4,10 @@ import { Logger as LoggerService } from 'src/modules/loggers';
 import { appProvider } from './applications/app.provider';
 import { setupSwagger } from './docs/docs';
 import compression from 'compression';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+
+dayjs.extend(utc);
 
 async function bootstrap() {
   const startBoootstrapTime = performance.now();

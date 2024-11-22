@@ -1,4 +1,4 @@
-import { Missions, Tokens, UserMissions } from '@prisma/client';
+import { Missions, Tokens, UserGameProfileDailyCheckins, UserMissions } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 

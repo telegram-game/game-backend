@@ -2,6 +2,13 @@ import { Tokens, UserGameProfileAttribute } from '@prisma/client';
 import { Star } from '../common/common.model';
 import systemData from './system.json';
 
+export class CheckinCampaign {
+  reward: number;
+  stackCoefficient: number;
+  maxStack: number;
+  rewardToken: Tokens;
+}
+
 export class SystemConfigData {
   baseAttackByLevel: {
     [key in Star]?: number;
@@ -39,6 +46,7 @@ export class SystemConfigData {
     premiumReferrerReward: number;
     rewardToken: Tokens;
   }
+  checkinCampaign?: CheckinCampaign;
 }
 
 export const system = systemData as SystemConfigData;
