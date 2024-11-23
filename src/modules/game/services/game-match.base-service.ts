@@ -26,17 +26,19 @@ export abstract class BaseGameMatchService {
 
     const energyConfigData = configurationData.game.energy;
     if (userGameProfileGameSeason) {
+      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(userGameProfileGameSeason.energy, userGameProfileGameSeason.lastRechargeEnergyAt);
       return {
         rankPoint: userGameProfileGameSeason.rankPoint,
-        energy: userGameProfileGameSeason.energy,
-        lastRechargeEnergyAt: userGameProfileGameSeason.lastRechargeEnergyAt,
+        energy: updatedEnergy,
+        lastRechargeEnergyAt: lastRechargeEnergyAt,
         updatedAt: userGameProfileGameSeason.updatedAt,
       };
     } else {
+      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(energyConfigData.defaultInitEnergy, gameSeasons.fromDate);
       return {
         rankPoint: 0,
-        energy: energyConfigData.defaultInitEnergy,
-        lastRechargeEnergyAt: gameSeasons.fromDate,
+        energy: updatedEnergy,
+        lastRechargeEnergyAt: lastRechargeEnergyAt,
         updatedAt: gameSeasons.fromDate,
       };
     }
@@ -51,22 +53,35 @@ export abstract class BaseGameMatchService {
   } {
     const energyConfigData = configurationData.game.energy;
     const now = new Date();
-    const diff = now.getTime() - lastRechargeEnergyAt.getTime();
-    const diffSeconds = Math.floor(diff / 1000);
-    const totalBlock = Math.floor(
-      diffSeconds / energyConfigData.claimTimeBlockInSeconds,
-    );
-    if (totalBlock < 1) {
+
+    // Set energy to max if it is over max. And lastRechargeEnergyAt to now because we don't want to count when max
+    if (currentEnergy >= energyConfigData.maxEnergy) {
       return {
         updatedEnergy: currentEnergy,
+        lastRechargeEnergyAt: now,
+      }
+    }
+
+    let currentEnergyCheck = currentEnergy;
+    const lastDateCheck = new Date(lastRechargeEnergyAt);
+    const currentDateCheck = new Date(lastRechargeEnergyAt);
+    currentDateCheck.setSeconds(currentDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds);
+    while (currentEnergyCheck < energyConfigData.maxEnergy && currentDateCheck.getTime() < now.getTime()) {
+      currentEnergyCheck = Math.min(energyConfigData.maxEnergy, currentEnergyCheck + energyConfigData.claimEnergyAmount);
+      lastDateCheck.setSeconds(lastDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds); // set to last
+      currentDateCheck.setSeconds(currentDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds); // set to current
+    }
+  
+    if (currentEnergyCheck >= energyConfigData.maxEnergy) {
+      return {
+        updatedEnergy: currentEnergy,
+        lastRechargeEnergyAt: now,
       };
     }
 
-    const energyToAdd = totalBlock * energyConfigData.claimEnergyAmount;
-    currentEnergy += energyToAdd;
     return {
-      updatedEnergy: Math.min(currentEnergy, energyConfigData.maxEnergy),
-      lastRechargeEnergyAt: now,
+      updatedEnergy: currentEnergyCheck,
+      lastRechargeEnergyAt: lastDateCheck,
     };
   }
 

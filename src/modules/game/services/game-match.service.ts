@@ -62,11 +62,7 @@ export class GameMatchService extends BaseGameMatchService {
     }
 
     if (leftGameProfile.currentGameProfileSeason.energy < 1) {
-      const { updatedEnergy } = this.calculateEnergy(
-        leftGameProfile.currentGameProfileSeason.energy,
-        leftGameProfile.currentGameProfileSeason.lastRechargeEnergyAt,
-      );
-      if (updatedEnergy < 1) {
+      if (leftGameProfile.currentGameProfileSeason.energy < 1) {
         throw new BusinessException({
           status: HttpStatus.BAD_REQUEST,
           errorCode: 'INSUFFICIENT_ENERGY',

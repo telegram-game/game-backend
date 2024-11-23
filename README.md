@@ -1,4 +1,4 @@
-# LiveVPNConfigManager
+# TelegramGameServices
 * *Service name:* game-api-service
 * *Framework:* NestJS
 * *DatabaseORM:* Prisma
@@ -69,6 +69,7 @@
 |JWT_ACCESS_TOKEN_PUBLIC_KEY| The public key to verify access token ||
 |JWT_REFRESH_TOKEN_PRIVATE_KEY| The private key to sign refresh token ||
 |JWT_REFRESH_TOKEN_PUBLIC_KEY| The public key to verify refresh token ||
+|IS_STORE_MATCH_METADATA| The flag that we want to store match metadata or not |false|
 
 # How to install dependencies
 ## For dev
