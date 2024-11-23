@@ -1,10 +1,12 @@
 import { HeroAttribute, ItemType, Tokens } from '@prisma/client';
 import itemData from './item.json';
-import { Star } from '../common/common.model';
+import { PaymentProvider, Star } from '../common/common.model';
+import { TelegramCurrency } from 'src/modules/telegram';
 
 export class Chest {
   code: string;
   name: string;
+  description: string;
   itemTypeRates: {
     [key in ItemType]?: number;
   };
@@ -19,9 +21,10 @@ export class Chest {
     [key in Star]?: number;
   };
   cost?: {
-    token: Tokens | string;
+    token: Tokens | TelegramCurrency | string;
     value: number;
     isExtenalToken: boolean;
+    externalTokenProvider?: PaymentProvider;
   };
 }
 

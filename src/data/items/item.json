@@ -3,6 +3,7 @@
         "FIRE_SWORD_L1": {
             "code": "FIRE_SWORD_L1",
             "name": "Fire Sword L1",
+            "description": "Fire Sword L1",
             "itemTypeRates": {
                 "SWORD": 100
             },
@@ -17,14 +18,16 @@
                 "1": 100
             },
             "cost": {
-                "token": "STAR",
+                "token": "XTR",
                 "value": 50,
-                "isExtenalToken": true
+                "isExtenalToken": true,
+                "externalTokenProvider": "TELEGRAM"
             }
         },
         "FIRE_SHIELD_L1": {
             "code": "FIRE_SHIELD_L1",
             "name": "Fire Shield L1",
+            "description": "Fire Shield L1",
             "itemTypeRates": {
                 "SHIELD": 100
             },
@@ -39,14 +42,16 @@
                 "1": 100
             },
             "cost": {
-                "token": "STAR",
+                "token": "XTR",
                 "value": 50,
-                "isExtenalToken": true
+                "isExtenalToken": true,
+                "externalTokenProvider": "TELEGRAM"
             }
         },
         "ICE_SWORD_L1": {
             "code": "ICE_SWORD_L1",
             "name": "Ice Sword L1",
+            "description": "Ice Sword L1",
             "itemTypeRates": {
                 "SWORD": 100
             },
@@ -61,14 +66,16 @@
                 "1": 100
             },
             "cost": {
-                "token": "STAR",
+                "token": "XTR",
                 "value": 50,
-                "isExtenalToken": true
+                "isExtenalToken": true,
+                "externalTokenProvider": "TELEGRAM"
             }
         },
         "ICE_SHIELD_L1": {
             "code": "FIRICE_SHIELD_L1E_SHIELD_L1",
             "name": "Ice Shield L1",
+            "description": "Ice Shield L1",
             "itemTypeRates": {
                 "SHIELD": 100
             },
@@ -83,14 +90,16 @@
                 "1": 100
             },
             "cost": {
-                "token": "STAR",
+                "token": "XTR",
                 "value": 50,
-                "isExtenalToken": true
+                "isExtenalToken": true,
+                "externalTokenProvider": "TELEGRAM"
             }
         },
         "RANDOM_SWORD_SHIELD_L1": {
             "code": "RANDOM_SWORD_SHIELD_L1",
             "name": "Random Sword Shield L1",
+            "description": "Random Sword Shield L1",
             "itemTypeRates": {
                 "SWORD": 50,
                 "SHIELD": 50

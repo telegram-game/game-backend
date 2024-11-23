@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Scope } from '@nestjs/common';
 import { PrismaModule } from '../prisma';
 import { HeroService } from './services/hero.service';
 import { HeroRepository } from './repositories/hero.repository';
@@ -18,14 +18,24 @@ import { HeroItemService } from './services/hero-item.service';
 import { GameMatchController } from './controllers/game-match.controller';
 import { GameMatchService } from './services/game-match.service';
 import { GameProfileAttributeRepository } from './repositories/game-profile-attribute.repository';
-import { LoggerModule } from '../loggers';
+import { Logger, LoggerModule } from '../loggers';
 import { GameSeasonRepository } from './repositories/game-season.repository';
 import { GameSeasonService } from './services/game-seasion.service';
 import { UserGameProfileSeasonRepository } from './repositories/user-game-profile-season.repository';
 import { UserGameProfileSeasonMatchRepository } from './repositories/user-game-profile-season-match.repository';
+import { TelegramModule } from '../telegram/telegram.module';
+import { TelegramBusinessService } from './services/telegram-business.service';
+import { TelegramBotService } from '../telegram';
+import { ModuleRef } from '@nestjs/core';
 
 @Module({
-  imports: [PrismaModule, LoggerModule],
+  imports: [
+    PrismaModule,
+    LoggerModule,
+    TelegramModule.registerAsync({
+      isRunBotEvent: true,
+    }),
+  ],
   controllers: [
     GameProfileController,
     HeroController,
@@ -51,6 +61,15 @@ import { UserGameProfileSeasonMatchRepository } from './repositories/user-game-p
     GameMatchService,
     HeroItemService,
     GameSeasonService,
+    {
+      provide: TelegramBusinessService,
+      scope: Scope.DEFAULT,
+      inject: [ModuleRef, TelegramBotService, Logger],
+      useFactory: async (moduleRef: ModuleRef, telegramBotService: TelegramBotService, logger: Logger) => {
+        const inventoryService = await moduleRef.resolve<InventoryService>(InventoryService);
+        return new TelegramBusinessService(telegramBotService, inventoryService, logger);
+      },
+    },
   ],
   exports: [],
 })

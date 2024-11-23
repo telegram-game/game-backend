@@ -233,19 +233,25 @@ model UserGameHeroAttributes {
 }
 
 model UserGameInventories {
-  id                          String                        @id @default(cuid()) @map("id")
-  userId                      String                        @map("user_id")
-  userGameProfileId           String                        @map("user_game_profile_id")
-  itemCode                    ItemCode                      @map("item_code")
-  itemType                    ItemType                      @map("item_type")
-  star                        Int                           @default(1) @map("star")
-  createdAt                   DateTime                      @default(now()) @map("created_at")
-  updatedAt                   DateTime                      @updatedAt @map("updated_at")
+  id                String   @id @default(cuid()) @map("id")
+  userId            String   @map("user_id")
+  userGameProfileId String   @map("user_game_profile_id")
+  itemCode          ItemCode @map("item_code")
+  itemType          ItemType @map("item_type")
+  star              Int      @default(1) @map("star")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // For payment
+  paymentCode     String? @unique @map("payment_code")
+  /// [InventoryPaymentMetaData]
+  paymentMetaData Json?   @map("payment_meta_data")
+
   user                        User                          @relation(fields: [userId], references: [id])
   userGameInventoryAttributes UserGameInventoryAttributes[]
   userGameProfile             UserGameProfiles              @relation(fields: [userGameProfileId], references: [id])
 
-  @@unique([userGameProfileId])
+  @@index([userGameProfileId])
   @@map("user_game_inventories")
 }
 

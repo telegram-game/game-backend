@@ -41,6 +41,7 @@
     "compression": "^1.7.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
+    "grammy": "^1.32.0",
     "prisma": "^5.22.0",
     "prisma-json-types-generator": "^3.1.1",
     "reflect-metadata": "^0.2.0",
@@ -51,6 +52,7 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/compression": "^1.7.5",
+    "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.17.5",
@@ -73,8 +75,7 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3",
-    "@types/crypto-js": "^4.2.2"
+    "typescript": "^5.1.3"
   },
   "jest": {
     "moduleFileExtensions": [

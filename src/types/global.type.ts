@@ -1,6 +1,7 @@
 import { Tokens } from '@prisma/client';
 import { RequestContext } from 'src/models';
 import { SocialType } from 'src/modules/mission/models/mission';
+import {InventoryPaymentMetaData as GameInventoryPaymentMetaData} from 'src/modules/game/models/inventory.model.dto'; 
 
 declare global {
   // eslint-disable-next-line  @typescript-eslint/no-namespace
@@ -39,5 +40,7 @@ declare global {
       socialType: SocialType;
       socialIdOrLink?: string;
     }
+
+    export interface InventoryPaymentMetaData extends GameInventoryPaymentMetaData {}
   }
 }

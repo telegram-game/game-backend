@@ -4,6 +4,7 @@ import {
   UserGameInventoryAttributes,
 } from '@prisma/client';
 import { IsString } from 'class-validator';
+import { PaymentProvider } from 'src/data/common/common.model';
 
 export type FullInventoryRepositoryModel = UserGameInventories & {
   userGameInventoryAttributes: UserGameInventoryAttributes[];
@@ -23,4 +24,23 @@ export class BuyChestRequest {
 
   @Optional()
   code: string;
+}
+
+export class OpenChestRequirePaymentResponse {
+  provider: PaymentProvider;
+  codeOrUrl: string;
+
+  constructor(data: Partial<OpenChestRequirePaymentResponse>) {
+    Object.assign(this, data);
+  }
+}
+
+export interface InventoryPaymentMetaData {
+  provider: PaymentProvider;
+  paymentChargeId: string; // It's the payment charge id from the payment provider directly
+  providerPaymentChargeId: string; // It's the payment charge id from the provider of the payment provider. Example: Momo,...
+  providerMessageId: number;
+  providerUserId: string; // It's the user id from the provider of the payment provider.
+  currency: string;
+  totalAmount: number;
 }

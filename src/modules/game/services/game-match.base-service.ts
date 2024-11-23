@@ -26,7 +26,10 @@ export abstract class BaseGameMatchService {
 
     const energyConfigData = configurationData.game.energy;
     if (userGameProfileGameSeason) {
-      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(userGameProfileGameSeason.energy, userGameProfileGameSeason.lastRechargeEnergyAt);
+      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(
+        userGameProfileGameSeason.energy,
+        userGameProfileGameSeason.lastRechargeEnergyAt,
+      );
       return {
         rankPoint: userGameProfileGameSeason.rankPoint,
         energy: updatedEnergy,
@@ -34,7 +37,10 @@ export abstract class BaseGameMatchService {
         updatedAt: userGameProfileGameSeason.updatedAt,
       };
     } else {
-      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(energyConfigData.defaultInitEnergy, gameSeasons.fromDate);
+      const { updatedEnergy, lastRechargeEnergyAt } = this.calculateEnergy(
+        energyConfigData.defaultInitEnergy,
+        gameSeasons.fromDate,
+      );
       return {
         rankPoint: 0,
         energy: updatedEnergy,
@@ -59,19 +65,32 @@ export abstract class BaseGameMatchService {
       return {
         updatedEnergy: currentEnergy,
         lastRechargeEnergyAt: now,
-      }
+      };
     }
 
     let currentEnergyCheck = currentEnergy;
     const lastDateCheck = new Date(lastRechargeEnergyAt);
     const currentDateCheck = new Date(lastRechargeEnergyAt);
-    currentDateCheck.setSeconds(currentDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds);
-    while (currentEnergyCheck < energyConfigData.maxEnergy && currentDateCheck.getTime() < now.getTime()) {
-      currentEnergyCheck = Math.min(energyConfigData.maxEnergy, currentEnergyCheck + energyConfigData.claimEnergyAmount);
-      lastDateCheck.setSeconds(lastDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds); // set to last
-      currentDateCheck.setSeconds(currentDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds); // set to current
+    currentDateCheck.setSeconds(
+      currentDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds,
+    );
+    while (
+      currentEnergyCheck < energyConfigData.maxEnergy &&
+      currentDateCheck.getTime() < now.getTime()
+    ) {
+      currentEnergyCheck = Math.min(
+        energyConfigData.maxEnergy,
+        currentEnergyCheck + energyConfigData.claimEnergyAmount,
+      );
+      lastDateCheck.setSeconds(
+        lastDateCheck.getSeconds() + energyConfigData.claimTimeBlockInSeconds,
+      ); // set to last
+      currentDateCheck.setSeconds(
+        currentDateCheck.getSeconds() +
+          energyConfigData.claimTimeBlockInSeconds,
+      ); // set to current
     }
-  
+
     if (currentEnergyCheck >= energyConfigData.maxEnergy) {
       return {
         updatedEnergy: currentEnergy,
@@ -98,7 +117,9 @@ export abstract class BaseGameMatchService {
       matchConfigData.maxDiffPoint,
     );
     const deltaRankPoint = isLeftStronger ? -diffRankPoint : diffRankPoint;
-    const finalDiffRankPoint = (leftWin ? matchConfigData.basePoint : - matchConfigData.basePoint) + deltaRankPoint;
+    const finalDiffRankPoint =
+      (leftWin ? matchConfigData.basePoint : -matchConfigData.basePoint) +
+      deltaRankPoint;
 
     return Math.max(0, leftRankPoint + finalDiffRankPoint);
   }
