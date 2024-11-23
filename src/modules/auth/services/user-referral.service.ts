@@ -27,6 +27,7 @@ export class UserReferralService {
       .then((data) => {
         return {
           total: data.total,
+          totalTokenForReferral: data.totalTokenForReferral,
           page: page,
           limit: limit,
           data: data.data.map((item) => ({
@@ -58,17 +59,28 @@ export class UserReferralService {
       return;
     }
 
+    const userReward = isPremium
+    ? referralCampaign.premiumUserReward
+    : referralCampaign.userReward;
+
+    const referrerReward = isPremium
+    ? referralCampaign.premiumReferrerReward
+    : referralCampaign.referrerReward;
+
     await this.userReferralRepository.create({
       userId: referrerUser.id,
       provider,
       providerUserId: providerId,
       referredUserId: user.id,
+      referredTokenValue: referrerReward,
+      referrerTokenValue: userReward,
+      metadata: {
+        referralCampaign,
+        isPremium,
+      }
     });
 
     // Increase referrer balance
-    const referrerReward = isPremium
-      ? referralCampaign.premiumReferrerReward
-      : referralCampaign.referrerReward;
     await this.balanceService.increase(
       referrerUser.id,
       referralCampaign.rewardToken,
@@ -86,9 +98,6 @@ export class UserReferralService {
     );
 
     // Increase user balance
-    const userReward = isPremium
-      ? referralCampaign.premiumUserReward
-      : referralCampaign.userReward;
     await this.balanceService.increase(
       user.id,
       referralCampaign.rewardToken,

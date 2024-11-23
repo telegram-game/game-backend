@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { TelegramBotService } from './services/telegram-bot.service';
 import { ConfigService } from '@nestjs/config';
 import { TelegramBotServiceOption } from './models/telegram.bot';
+import { Logger } from '../loggers';
 
 let telegramBotService: TelegramBotService | null = null;
 
@@ -13,11 +14,12 @@ export class TelegramModule {
       providers: [
         {
           provide: TelegramBotService,
-          inject: [ConfigService],
-          useFactory: (configService: ConfigService) => {
+          inject: [ConfigService, Logger],
+          useFactory: (configService: ConfigService, logger: Logger) => {
             if (!telegramBotService) {
               telegramBotService = new TelegramBotService(
                 configService,
+                logger,
                 options,
               );
             }

@@ -6,12 +6,14 @@ import {
   TelegramCurrency,
 } from '../models/telegram.bot';
 import { LabeledPrice } from 'grammy/types';
+import { Logger } from 'src/modules/loggers';
 
 export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
   private bot: Bot;
   private readonly telegramBotToken: string;
   constructor(
     configService: ConfigService,
+    private readonly logger: Logger,
     private readonly options: TelegramBotServiceOption,
   ) {
     this.telegramBotToken = configService.get<string>('telegramBotToken');
@@ -26,15 +28,16 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
     this.bot = new Bot(this.telegramBotToken);
     if (this.options.isRunBotEvent) {
       this.bot.command('start', (ctx) => ctx.reply('Welcome! Up and running.'));
-      this.bot.start();
-
-      this.bot.on('pre_checkout_query', (ctx) => {
-        this.options?.onPrePayment(ctx);
-      });
-
-      this.bot.on('message:successful_payment', (ctx) => {
-        console.log(ctx.message.successful_payment);
-        this.options?.onSuccessfulPayment(ctx);
+      this.bot.start().then(() => {
+        this.bot.on('pre_checkout_query', (ctx) => {
+          this.options?.onPrePayment(ctx);
+        });
+  
+        this.bot.on('message:successful_payment', (ctx) => {
+          this.options?.onSuccessfulPayment(ctx);
+        });
+      }).catch((err) => {
+        this.logger.error('Telegram bot failed', err);
       });
     }
   }

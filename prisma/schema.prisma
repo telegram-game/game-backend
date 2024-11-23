@@ -145,13 +145,18 @@ model UserProfiles {
 }
 
 model UserReferrals {
-  id             String       @id @default(cuid()) @map("id")
-  userId         String       @map("user_id")
-  provider       UserProvider @map("provider")
-  providerUserId String       @map("provider_user_id")
-  referredUserId String       @map("referred_user_id")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  id                 String       @id @default(cuid()) @map("id")
+  userId             String       @map("user_id")
+  provider           UserProvider @map("provider")
+  providerUserId     String       @map("provider_user_id")
+  referredUserId     String       @map("referred_user_id")
+  referredTokenValue Int?         @default(0) @map("referred_token_value")
+  referrerTokenValue Int?         @default(0) @map("referrer_token_value")
+
+  /// [Record<string, any>]
+  metadata           Json?        @map("metadata")
+  createdAt          DateTime     @default(now()) @map("created_at")
+  updatedAt          DateTime     @updatedAt @map("updated_at")
 
   referredUser User @relation(fields: [referredUserId], references: [id])
 
