@@ -73,7 +73,7 @@
             }
         },
         "ICE_SHIELD_L1": {
-            "code": "FIRICE_SHIELD_L1E_SHIELD_L1",
+            "code": "ICE_SHIELD_L1",
             "name": "Ice Shield L1",
             "description": "Ice Shield L1",
             "itemTypeRates": {
