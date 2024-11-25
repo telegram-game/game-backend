@@ -10,11 +10,23 @@ export class InventoryAttributeRepository extends BaseRepository {
   constructor(prismaService: PrismaService) {
     super(prismaService);
   }
-
+  
   async create(
     data: Partial<UserGameInventoryAttributes>,
   ): Promise<UserGameInventoryAttributes> {
     return this.client.userGameInventoryAttributes.create({
+      data: data as UserGameInventoryAttributes,
+    });
+  }
+
+  async update(
+    data: Partial<UserGameInventoryAttributes>,
+  ): Promise<UserGameInventoryAttributes> {
+    return this.client.userGameInventoryAttributes.update({
+      where: {
+        id: data.id,
+        userId: data.userId,
+      },
       data: data as UserGameInventoryAttributes,
     });
   }

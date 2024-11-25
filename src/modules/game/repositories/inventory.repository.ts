@@ -70,4 +70,19 @@ export class InventoryRepository extends BaseRepository {
       data: data as UserGameInventories,
     });
   }
+
+  async updateOptimistic(
+    data: Partial<UserGameInventories>,
+    updatedAt: Date,
+  ): Promise<UserGameInventories> {
+    return this.client.userGameInventories.update({
+      where: {
+        id: data.id,
+        userId: data.userId,
+        userGameProfileId: data.userGameProfileId,
+        updatedAt,
+      },
+      data: data as UserGameInventories,
+    });
+  }
 }

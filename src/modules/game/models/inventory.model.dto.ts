@@ -3,7 +3,7 @@ import {
   UserGameInventories,
   UserGameInventoryAttributes,
 } from '@prisma/client';
-import { IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 import { PaymentProvider } from 'src/data/common/common.model';
 
 export type FullInventoryRepositoryModel = UserGameInventories & {
@@ -43,4 +43,16 @@ export interface InventoryPaymentMetaData {
   providerUserId: string; // It's the user id from the provider of the payment provider.
   currency: string;
   totalAmount: number;
+}
+
+export class RerollItemAttributesRequest {
+  @IsString()
+  gameProfileId: string;
+  
+  @IsString()
+  inventoryId: string;
+
+  @IsOptional()
+  @IsArray()
+  attributeIds?: string[];
 }

@@ -41,6 +41,7 @@ export class CheckinService {
     return {
       currentStack,
       data,
+      hasClaimed: data[0]?.checkinCode === this.calculateCheckinCode(),
     };
   }
 

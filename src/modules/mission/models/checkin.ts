@@ -14,4 +14,5 @@ export class ClaimCheckinRequest {
 export class CheckinDataReponse {
   currentStack: number;
   data: UserGameProfileDailyCheckins[];
+  hasClaimed: boolean;
 }
