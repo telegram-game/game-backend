@@ -65,9 +65,18 @@ import { ModuleRef } from '@nestjs/core';
       provide: TelegramBusinessService,
       scope: Scope.DEFAULT,
       inject: [ModuleRef, TelegramBotService, Logger],
-      useFactory: async (moduleRef: ModuleRef, telegramBotService: TelegramBotService, logger: Logger) => {
-        const inventoryService = await moduleRef.resolve<InventoryService>(InventoryService);
-        return new TelegramBusinessService(telegramBotService, inventoryService, logger);
+      useFactory: async (
+        moduleRef: ModuleRef,
+        telegramBotService: TelegramBotService,
+        logger: Logger,
+      ) => {
+        const inventoryService =
+          await moduleRef.resolve<InventoryService>(InventoryService);
+        return new TelegramBusinessService(
+          telegramBotService,
+          inventoryService,
+          logger,
+        );
       },
     },
   ],

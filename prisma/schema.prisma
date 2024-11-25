@@ -247,6 +247,10 @@ model UserGameInventories {
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
+  // Reroll data
+  lastRerollDate       DateTime? @map("last_reroll_date")
+  rerollCount      Int?      @map("reroll_count")
+
   // For payment
   paymentCode     String? @unique @map("payment_code")
   /// [InventoryPaymentMetaData]

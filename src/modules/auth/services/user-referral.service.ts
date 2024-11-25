@@ -60,12 +60,12 @@ export class UserReferralService {
     }
 
     const userReward = isPremium
-    ? referralCampaign.premiumUserReward
-    : referralCampaign.userReward;
+      ? referralCampaign.premiumUserReward
+      : referralCampaign.userReward;
 
     const referrerReward = isPremium
-    ? referralCampaign.premiumReferrerReward
-    : referralCampaign.referrerReward;
+      ? referralCampaign.premiumReferrerReward
+      : referralCampaign.referrerReward;
 
     await this.userReferralRepository.create({
       userId: referrerUser.id,
@@ -77,7 +77,7 @@ export class UserReferralService {
       metadata: {
         referralCampaign,
         isPremium,
-      }
+      },
     });
 
     // Increase referrer balance

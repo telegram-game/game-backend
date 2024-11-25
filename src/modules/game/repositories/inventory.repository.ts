@@ -13,15 +13,15 @@ export class InventoryRepository extends BaseRepository {
   }
 
   async getById(
-    id: string,
     userId: string,
     gameProfileId: string,
+    id: string,
   ): Promise<FullInventoryRepositoryModel> {
     return this.client.userGameInventories.findFirst({
       where: {
+        id,
         userId,
         userGameProfileId: gameProfileId,
-        id,
       },
       include: {
         userGameInventoryAttributes: true,
@@ -67,6 +67,21 @@ export class InventoryRepository extends BaseRepository {
     data: Partial<UserGameInventories>,
   ): Promise<UserGameInventories> {
     return this.client.userGameInventories.create({
+      data: data as UserGameInventories,
+    });
+  }
+
+  async updateOptimistic(
+    data: Partial<UserGameInventories>,
+    updatedAt: Date,
+  ): Promise<UserGameInventories> {
+    return this.client.userGameInventories.update({
+      where: {
+        id: data.id,
+        userId: data.userId,
+        userGameProfileId: data.userGameProfileId,
+        updatedAt,
+      },
       data: data as UserGameInventories,
     });
   }

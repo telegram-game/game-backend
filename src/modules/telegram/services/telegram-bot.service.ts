@@ -28,17 +28,20 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
     this.bot = new Bot(this.telegramBotToken);
     if (this.options.isRunBotEvent) {
       this.bot.command('start', (ctx) => ctx.reply('Welcome! Up and running.'));
-      this.bot.start().then(() => {
-        this.bot.on('pre_checkout_query', (ctx) => {
-          this.options?.onPrePayment(ctx);
+      this.bot
+        .start()
+        .then(() => {
+          this.bot.on('pre_checkout_query', (ctx) => {
+            this.options?.onPrePayment(ctx);
+          });
+
+          this.bot.on('message:successful_payment', (ctx) => {
+            this.options?.onSuccessfulPayment(ctx);
+          });
+        })
+        .catch((err) => {
+          this.logger.error('Telegram bot failed', err);
         });
-  
-        this.bot.on('message:successful_payment', (ctx) => {
-          this.options?.onSuccessfulPayment(ctx);
-        });
-      }).catch((err) => {
-        this.logger.error('Telegram bot failed', err);
-      });
     }
   }
 

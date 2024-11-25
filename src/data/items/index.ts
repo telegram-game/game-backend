@@ -74,6 +74,11 @@ export class ItemConfigData {
     [key: string]: Item;
   };
   itemAttributes: ItemAttribute;
+  rerollData: {
+    token: Tokens;
+    value: number;
+    multiplier: number;
+  };
 }
 
 export const items = itemData as ItemConfigData;

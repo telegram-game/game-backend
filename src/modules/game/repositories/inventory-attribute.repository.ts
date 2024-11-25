@@ -18,4 +18,16 @@ export class InventoryAttributeRepository extends BaseRepository {
       data: data as UserGameInventoryAttributes,
     });
   }
+
+  async update(
+    data: Partial<UserGameInventoryAttributes>,
+  ): Promise<UserGameInventoryAttributes> {
+    return this.client.userGameInventoryAttributes.update({
+      where: {
+        id: data.id,
+        userId: data.userId,
+      },
+      data: data as UserGameInventoryAttributes,
+    });
+  }
 }

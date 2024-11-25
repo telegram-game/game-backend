@@ -17,17 +17,16 @@ export class UserReferralRepository extends BaseRepository {
         userId,
       },
     });
-    const totalTokenForReferral = await this.client.userReferrals.aggregate({
-      where: {
-        userId,
-      },
-      _sum: {
-        referrerTokenValue: true,
-      },
-    })
-    .then(
-      (result) => result._sum.referrerTokenValue || 0,
-    );
+    const totalTokenForReferral = await this.client.userReferrals
+      .aggregate({
+        where: {
+          userId,
+        },
+        _sum: {
+          referrerTokenValue: true,
+        },
+      })
+      .then((result) => result._sum.referrerTokenValue || 0);
     const data = await this.client.userReferrals.findMany({
       where: {
         userId,

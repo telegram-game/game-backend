@@ -13,9 +13,9 @@ export class HeroItemService {
 
   async equip(userId: string, data: EquipRequest): Promise<void> {
     const inventory = await this.inventoryRepository.getById(
-      data.inventoryId,
       userId,
       data.gameProfileId,
+      data.inventoryId,
     );
     if (!inventory) {
       throw new BusinessException({

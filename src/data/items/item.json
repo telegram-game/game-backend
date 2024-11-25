@@ -360,5 +360,10 @@
                 ]
             }
         }
+    },
+    "rerollData": {
+        "token": "INGAME",
+        "value": 1,
+        "multiplier": 2
     }
 }
